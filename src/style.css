@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&display=swap');
+
+body {
+    background-color: black;
+    font-family: 'Consolas', 'Inconsolata', monospace;
+    padding: 10px;
+    margin: 0px;
+}
+
+canvas {
+    position: absolute;
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+#fps {
+    color: blue;
+    display: inline;
+    font-size: 200%;
+    padding: 10px;
+}
