@@ -11,7 +11,7 @@ export class MyTestBehavior implements Component {
         public entity: Entity,
         public speed: number,
         public rotationSpeed: number
-    ) {}
+    ) { }
 }
 
 export function myTestBehaviorSystem(world: World) {

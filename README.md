@@ -1,4 +1,4 @@
 # TODO
 
-- Make every single thing cacheable and have a reset function and stuff
-    - Focus solely on performance before getting to physics
+- Collision events that update every collision frame.
+    - These would be able to be used by other systems.

@@ -1,14 +1,13 @@
 import './style.css';
 import { System, World } from './ecs';
-import { HEIGHT, WIDTH } from './parameters';
+import { HEIGHT, STARTING_SCENE, WIDTH } from './parameters';
 import { createRenderSystem } from './systems/render_system';
 import { Time } from './util/time';
 import { createFpsSystem } from './systems/fps_system';
 import { Input } from './util/input';
-import { Game } from './game';
 
 onload = () => {
-    World.setWorld(Game);
+    World.setWorld(STARTING_SCENE);
     Input.initKeys();
 
     const globalSystems: System[] = [
