@@ -49,6 +49,7 @@ export abstract class World {
         this.setup();
     }
     abstract setup(): void;
+    renderSystems: System[] = [];
     systems: System[] = [];
 
     private entityCount = 0;
@@ -145,8 +146,8 @@ export abstract class World {
         entity: Entity
     ): T[] {
         const comps: T[] = [];
-        for (const component of this.components) {
-            for (const Type of Types) {
+        for (const Type of Types) {
+            for (const component of this.components) {
                 if (component.entity != entity) continue;
                 if (!isComponent(component, Type)) continue;
                 comps.push(component as T);

@@ -1,11 +1,12 @@
 export class Time {
     private static _deltaTime = 0;
+    private static _renderDeltaTime = 0;
 
     static get deltaTime() {
         return Math.max(
             Math.min(
                 this._deltaTime,
-                0.05
+                0.01
             ),
             0.001
         );
@@ -15,17 +16,27 @@ export class Time {
         return this._deltaTime;
     }
 
-    private static before: number;
-    private static now: number;
-    static {
-        this.before = performance.now();
-        this.now = performance.now();
+    static get renderDeltaTime() {
+        return this._renderDeltaTime;
     }
-    static createSystem() {
+
+    static createTickSystem() {
+        let before = performance.now();
+        let now = performance.now();
         return () => {
-            this.now = performance.now();
-            this._deltaTime = (this.now - this.before) / 1_000;
-            this.before = this.now;
+            now = performance.now();
+            this._deltaTime = (now - before) / 1_000;
+            before = now;
+        };
+    }
+
+    static createRenderTickSystem() {
+        let before = performance.now();
+        let now = performance.now();
+        return () => {
+            now = performance.now();
+            this._renderDeltaTime = (now - before) / 1_000;
+            before = now;
         };
     }
 }

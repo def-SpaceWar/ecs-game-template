@@ -21,3 +21,10 @@ canvas {
     font-size: 200%;
     padding: 10px;
 }
+
+#tps {
+    color: yellow;
+    display: inline;
+    font-size: 200%;
+    padding: 10px;
+}

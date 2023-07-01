@@ -17,7 +17,7 @@ export function createFpsSystem(sampleSize: number): System {
         min = () => Math.floor(Math.min(...fpsCounts));
 
     return () => {
-        fpsCounts.push(1 / Time.rawDeltaTime);
+        fpsCounts.push(1 / Time.renderDeltaTime);
         fpsText.innerText = `FPS: ${average()}; [${min()}, ${max()}]`;
     };
 }

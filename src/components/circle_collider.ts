@@ -1,5 +1,4 @@
 import { Entity } from "../ecs";
-import { CIRCLE_POINTS } from "../parameters";
 import { Collider } from "../systems/collision_system";
 import { Polygon } from "../util/collision";
 import { Vector } from "../util/vector";
@@ -12,17 +11,10 @@ export class CircleCollider implements Collider {
     ) {}
 
     getPolygon(): Polygon {
-        const points: Vector[] = [];
+        const points: Vector[] = [
+            Vector.new(this.diameter / 2, 0).add(this.offset)
+        ];
 
-        for (let i = 0; i < CIRCLE_POINTS; i++) {
-            points.push(
-                Vector.new(
-                    Math.cos(i * Math.PI * 2 / CIRCLE_POINTS) * this.diameter / 2,
-                    Math.sin(i * Math.PI * 2 / CIRCLE_POINTS) * this.diameter / 2
-                ).add(this.offset)
-            );
-        }
-
-        return new Polygon(points);
+        return new Polygon(points, true, this.diameter / 2);
     }
 }

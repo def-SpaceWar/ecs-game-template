@@ -1,5 +1,7 @@
 import { Acceleration } from "../components/acceleration";
+import { AngularVelocity } from "../components/angular_velocity";
 import { Position } from "../components/position";
+import { Rotation } from "../components/rotation";
 import { Velocity } from "../components/velocity";
 import { World } from "../ecs";
 import { Time } from "../util/time";
@@ -26,5 +28,17 @@ export function forcesSystem(world: World) {
                     .clone()
                     .scale(Time.deltaTime)
             );
+    }
+
+    const rotatingEntities = world.requireEntitiesAllOf([
+        Rotation,
+        AngularVelocity
+    ]);
+
+    for (const e of rotatingEntities) {
+        const rotation = world.getComponent(Rotation, e)!;
+        const angularVelocity = world.getComponent(AngularVelocity, e)!;
+
+        rotation.angle += angularVelocity.vel * Time.deltaTime;
     }
 }
