@@ -10,8 +10,10 @@ export interface Drawable extends Component {
     offset: Vector;
 }
 
+export let ctx: CanvasRenderingContext2D;
+
 export function createRenderSystem(width: number, height: number): System {
-    const ctx = document
+    ctx = document
         .getElementById('app')!
         .appendChild(document
             .createElement('canvas'))

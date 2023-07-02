@@ -1,8 +1,8 @@
 import { Component, Entity } from "../ecs";
 
-export class Restitution implements Component {
+export class SimpleDrag implements Component {
     constructor(
         public entity: Entity,
-        public elasticity = 0.5
+        public multiplier = 0.5
     ) {}
 }

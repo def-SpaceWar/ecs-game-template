@@ -2,6 +2,7 @@ import { Acceleration } from "../components/acceleration";
 import { AngularVelocity } from "../components/angular_velocity";
 import { Position } from "../components/position";
 import { Rotation } from "../components/rotation";
+import { SimpleDrag } from "../components/simple_drag";
 import { Velocity } from "../components/velocity";
 import { World } from "../ecs";
 import { Time } from "../util/time";
@@ -28,6 +29,11 @@ export function forcesSystem(world: World) {
                     .clone()
                     .scale(Time.deltaTime)
             );
+
+        const simpleDrag = world.getComponent(SimpleDrag, e);
+        if (simpleDrag) {
+            velocity.vel.scale(Math.exp(Time.deltaTime * Math.log(simpleDrag.multiplier)));
+        }
     }
 
     const rotatingEntities = world.requireEntitiesAllOf([
@@ -40,5 +46,10 @@ export function forcesSystem(world: World) {
         const angularVelocity = world.getComponent(AngularVelocity, e)!;
 
         rotation.angle += angularVelocity.vel * Time.deltaTime;
+
+        const simpleDrag = world.getComponent(SimpleDrag, e);
+        if (simpleDrag) {
+            angularVelocity.vel *= Math.exp(Time.deltaTime * Math.log(simpleDrag.multiplier));
+        }
     }
 }

@@ -76,4 +76,8 @@ export class Vector {
     nearZero() {
         return this.magnitudeSquared < 0.1;
     }
+
+    tuple(): [number, number] {
+        return [this.x, this.y];
+    }
 }

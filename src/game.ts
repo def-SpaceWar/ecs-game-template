@@ -1,5 +1,4 @@
 import { MyTestBehavior, myTestBehaviorSystem } from "./behaviors/my_test_behavior";
-import { WrapAroundScreen, wrapAroundScreenSystem } from "./behaviors/wrap_around_screen";
 import { Acceleration } from "./components/acceleration";
 import { AngularVelocity } from "./components/angular_velocity";
 import { Circle } from "./components/circle";
@@ -12,10 +11,12 @@ import { Rectangle } from "./components/rectangle";
 import { RectangleCollider } from "./components/rectangle_collider";
 import { Restitution } from "./components/restitution";
 import { Rotation } from "./components/rotation";
+import { SimpleDrag } from "./components/simple_drag";
 import { Velocity } from "./components/velocity";
 import { World } from "./ecs";
 import { HEIGHT, WIDTH } from "./parameters";
 import { collisionSystem } from "./systems/collision_system";
+import { debugColliderSystem } from "./systems/debug_collider_system";
 import { forcesSystem } from "./systems/forces_system";
 import { Color } from "./util/color";
 import { Vector } from "./util/vector";
@@ -23,13 +24,14 @@ import { Vector } from "./util/vector";
 export class Game extends World {
     setup(): void {
         this.systems = [
-            collisionSystem,
             forcesSystem,
+            collisionSystem,
             myTestBehaviorSystem,
         ];
 
         this.renderSystems = [
-            wrapAroundScreenSystem
+            // wrapAroundScreenSystem
+            debugColliderSystem
         ];
 
         this.createEntity()
@@ -46,15 +48,15 @@ export class Game extends World {
             )
 
             // Circle Player
-            .add(
-                Circle,
-                100,
-                Color.new(255, 0, 0)
-            )
-            .add(
-                CircleCollider,
-                100
-            )
+            //.add(
+            //    Circle,
+            //    100,
+            //    Color.new(255, 0, 0)
+            //)
+            //.add(
+            //    CircleCollider,
+            //    100
+            //)
 
             // Square Player
             //.add(
@@ -68,44 +70,44 @@ export class Game extends World {
             //)
 
             // Capsule Player
-            //.add(
-            //    Rectangle,
-            //    Vector.new(100, 100),
-            //    Color.new(0, 0, 255),
-            //    -1
-            //)
-            //.add(
-            //    Circle,
-            //    100,
-            //    Color.new(255, 0, 0),
-            //    0,
-            //    Vector.new(0, 50)
-            //)
-            //.add(
-            //    Circle,
-            //    100,
-            //    Color.new(255, 0, 0),
-            //    0,
-            //    Vector.new(0, -50)
-            //)
-            //.add(
-            //    ComplexCollider,
-            //    [
-            //        ['rect', 0.5, Vector.new(100, 100), Vector.zero(), 0],
-            //        ['circle', 0.25, 99, Vector.new(0, 50)],
-            //        ['circle', 0.25, 99, Vector.new(0, -50)]
-            //    ]
-            //)
+            .add(
+                Rectangle,
+                Vector.new(100, 100),
+                Color.new(255, 175, 0),
+                -1
+            )
+            .add(
+                Circle,
+                100,
+                Color.new(255, 0, 0),
+                0,
+                Vector.new(0, 50)
+            )
+            .add(
+                Circle,
+                100,
+                Color.new(255, 0, 0),
+                0,
+                Vector.new(0, -50)
+            )
+            .add(
+                ComplexCollider,
+                [
+                    ['rect', 0.6, Vector.new(100, 100), Vector.zero(), 0],
+                    ['circle', 0.2, 99, Vector.new(0, 50)],
+                    ['circle', 0.2, 99, Vector.new(0, -50)]
+                ]
+            )
 
             .add(Velocity)
             .add(Mass)
             .add(Acceleration, Vector.new(0, 400))
             .add(Rotation)
             .add(AngularVelocity)
-            .add(Restitution, 0)
+            .add(Restitution)
             .add(Friction)
-            .add(MyTestBehavior)
-            .add(WrapAroundScreen);
+            .add(SimpleDrag)
+            .add(MyTestBehavior);
 
         this.createEntity()
             .add(
@@ -117,6 +119,7 @@ export class Game extends World {
                 Vector.new(300, 300),
                 Color.new(0, 255, 0)
             )
+            .add(Restitution)
             .add(Friction)
             .add(
                 RectangleCollider,
@@ -133,6 +136,7 @@ export class Game extends World {
                 350,
                 Color.new(0, 255, 0)
             )
+            .add(Restitution)
             .add(Friction)
             .add(
                 CircleCollider,
@@ -156,7 +160,8 @@ export class Game extends World {
                 150,
                 Color.new(0, 255, 0)
             )
-            .add(Friction)
+            .add(Restitution)
+            //.add(Friction)
             .add(
                 ComplexCollider,
                 [
