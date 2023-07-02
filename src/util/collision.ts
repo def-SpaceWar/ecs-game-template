@@ -1,4 +1,5 @@
 import { Entity } from "../ecs";
+import { CIRCLE_POINTS } from "../parameters";
 import { Vector } from "./vector";
 
 export class Line {
@@ -50,24 +51,41 @@ export class Polygon {
         return lines;
     }
 
-    getAxes(): Vector[] {
-        const axes: Vector[] = [];
-
+    *getAxes()  {
         for (const line of this.getLines()) {
-            axes.push(line.toAxis().normalize());
+            yield line.toAxis().normalize();
         }
-
-        return axes;
     }
 
     getCircleAxis(other: Polygon): Vector {
-        return other.center.clone().subtract(this.center).normalize();
+        if (other.isCircle) {
+            return other.center.clone().subtract(this.center).normalize();
+        }
+
+        let otherPoint = Vector.undefined();
+        let minDistance = Infinity;
+
+        for (const line of other.getLines()) {
+            const closestPoint = Collision.closestPointFromLine(this.center, line);
+            const distance = closestPoint.clone()
+                .subtract(this.center)
+                .magnitudeSquared;
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                otherPoint = closestPoint;
+            }
+        }
+
+        return otherPoint.subtract(this.center).normalize();
     }
 
     project(axis: Vector): [min: number, max: number] {
         if (this.isCircle) {
-            const projection = Vector.dot(this.center, axis);
-            return [projection - this.radius, projection + this.radius]
+            return [
+                Vector.dot(this.center.clone().add(axis.clone().scale(-this.radius)), axis),
+                Vector.dot(this.center.clone().add(axis.clone().scale(this.radius)), axis)
+            ];
         }
 
         let min = Infinity;
@@ -83,19 +101,32 @@ export class Polygon {
     }
 
     inertia(mass: number): number {
-        if (this.isCircle) return 0.25 * mass * this.radius ** 2;
-        const N = this.points.length;
+        let points = this.points;
+
+        if (this.isCircle) {
+            for (let i = 0; i < CIRCLE_POINTS; i++) {
+                const angle = i * 2 * Math.PI / CIRCLE_POINTS;
+                points.push(
+                    Vector.new(
+                        Math.cos(angle) * this.radius,
+                        Math.sin(angle) * this.radius
+                    ).add(this.center)
+                );
+            }
+        }
+
+        const N = points.length;
 
         let numerator = 0;
         let denominator = 0;
         for (let n = 1; n <= N; n++) {
-            numerator += Vector.cross(this.points[(n + 1) % N], this.points[n % N]) * (
-                Vector.dot(this.points[n % N], this.points[n % N]) +
-                Vector.dot(this.points[n % N], this.points[(n + 1) % N]) +
-                Vector.dot(this.points[(n + 1) % N], this.points[(n + 1) % N])
+            numerator += Vector.cross(points[(n + 1) % N], points[n % N]) * (
+                Vector.dot(points[n % N], points[n % N]) +
+                Vector.dot(points[n % N], points[(n + 1) % N]) +
+                Vector.dot(points[(n + 1) % N], points[(n + 1) % N])
             );
 
-            denominator += 6 * Vector.cross(this.points[(n + 1) % N], this.points[n % N]);
+            denominator += 6 * Vector.cross(points[(n + 1) % N], points[n % N]);
         }
 
         return mass * numerator / denominator;
@@ -124,129 +155,153 @@ export type CollisionEvent = [
     pointOfCollision: Vector
 ];
 
+export function minimumAbsoluteValue(a: number, b: number): number {
+    if (Math.abs(a) < Math.abs(b)) {
+        return a;
+    }
+
+    return b;
+}
+
 export namespace Collision {
-    export function collisionInfo(
-        p1: Polygon,
-        p2: Polygon
-    ): CollisionInfo | undefined {
+    export function* collisionInfo(
+        p1s: Polygon[],
+        p2s: Polygon[]
+    ): Generator<[CollisionInfo, [Polygon, Polygon]], void, unknown> {
         let normal = Vector.zero();
         let overlap = Infinity;
+        let polygon1 = new Polygon([]);
+        let polygon2 = new Polygon([]);
+        let areColliding = false;
 
-        if (!p1.isCircle) {
-            for (const axis of p1.getAxes()) {
-                const [min1, max1] = p1.project(axis);
-                const [min2, max2] = p2.project(axis);
+        for (const p1 of p1s) {
+            p2Loop: for (const p2 of p2s) {
+                if (!p1.isCircle) {
+                    for (const axis of p1.getAxes()) {
+                        const [min1, max1] = p1.project(axis);
+                        const [min2, max2] = p2.project(axis);
 
-                if (min1 > max2) return undefined;
-                if (min2 > max1) return undefined;
+                        if (min1 > max2) continue p2Loop;
+                        if (min2 > max1) continue p2Loop;
 
-                const signedOverlap = Math.min(max2 - min1, min2 - max1);
-                let o = Math.abs(signedOverlap);
+                        const signedOverlap = minimumAbsoluteValue(max2 - min1, min2 - max1);
+                        let o = Math.abs(signedOverlap);
 
-                if (min1 > min2 && max1 < max2) {
-                    const mins = Math.abs(min1 - min2);
-                    const maxs = Math.abs(max1 - max2);
+                        if (min1 > min2 && max1 < max2) {
+                            const mins = Math.abs(min1 - min2);
+                            const maxs = Math.abs(max1 - max2);
 
-                    if (mins < maxs) {
-                        o += mins;
-                    } else {
-                        o += maxs;
+                            if (mins < maxs) {
+                                o += mins;
+                            } else {
+                                o += maxs;
+                            }
+                        }
+
+                        if (o < overlap) {
+                            normal = axis.scale(Math.sign(signedOverlap));
+                            overlap = o;
+                        }
+                    }
+                } else {
+                    const axis = p1.getCircleAxis(p2);
+                    const [min1, max1] = p1.project(axis);
+                    const [min2, max2] = p2.project(axis);
+
+                    if (min1 > max2) continue p2Loop;
+                    if (min2 > max1) continue p2Loop;
+
+                    const signedOverlap = minimumAbsoluteValue(max2 - min1, min2 - max1);
+                    let o = Math.abs(signedOverlap);
+
+                    if (min1 > min2 && max1 < max2) {
+                        const mins = Math.abs(min1 - min2);
+                        const maxs = Math.abs(max1 - max2);
+
+                        if (mins < maxs) {
+                            o += mins;
+                        } else {
+                            o += maxs;
+                        }
+                    }
+
+                    if (o < overlap) {
+                        normal = axis.scale(Math.sign(signedOverlap));
+                        overlap = o;
                     }
                 }
 
-                if (o < overlap) {
+                if (!p2.isCircle) {
+                    for (const axis of p2.getAxes()) {
+                        const [min1, max1] = p1.project(axis);
+                        const [min2, max2] = p2.project(axis);
 
-                    normal = axis.scale(Math.sign(signedOverlap));
-                    overlap = o;
-                }
-            }
-        } else {
-            const axis = p1.getCircleAxis(p2);
-            const [min1, max1] = p1.project(axis);
-            const [min2, max2] = p2.project(axis);
+                        if (min1 > max2) continue p2Loop;
+                        if (min2 > max1) continue p2Loop;
 
-            if (min1 > max2) return undefined;
-            if (min2 > max1) return undefined;
+                        const signedOverlap = minimumAbsoluteValue(max2 - min1, min2 - max1);
+                        let o = Math.abs(signedOverlap);
 
-            const signedOverlap = Math.min(max2 - min1, min2 - max1);
-            let o = Math.abs(signedOverlap);
+                        if (min1 > min2 && max1 < max2) {
+                            const mins = Math.abs(min1 - min2);
+                            const maxs = Math.abs(max1 - max2);
 
-            if (min1 > min2 && max1 < max2) {
-                const mins = Math.abs(min1 - min2);
-                const maxs = Math.abs(max1 - max2);
+                            if (mins < maxs) {
+                                o += mins;
+                            } else {
+                                o += maxs;
+                            }
+                        }
 
-                if (mins < maxs) {
-                    o += mins;
+                        if (o < overlap) {
+                            normal = axis.scale(Math.sign(signedOverlap));
+                            overlap = o;
+                        }
+                    }
                 } else {
-                    o += maxs;
-                }
-            }
+                    const axis = p2.getCircleAxis(p1);
+                    const [min1, max1] = p1.project(axis);
+                    const [min2, max2] = p2.project(axis);
 
-            if (o < overlap) {
-                normal = axis.scale(Math.sign(signedOverlap));
-                overlap = o;
-            }
-        }
+                    if (min1 > max2) continue p2Loop;
+                    if (min2 > max1) continue p2Loop;
 
-        if (!p2.isCircle) {
-            for (const axis of p2.getAxes()) {
-                const [min1, max1] = p1.project(axis);
-                const [min2, max2] = p2.project(axis);
+                    const signedOverlap = minimumAbsoluteValue(max2 - min1, min2 - max1);
+                    let o = Math.abs(signedOverlap);
 
-                if (min1 > max2) return undefined;
-                if (min2 > max1) return undefined;
+                    if (min1 > min2 && max1 < max2) {
+                        const mins = Math.abs(min1 - min2);
+                        const maxs = Math.abs(max1 - max2);
 
-                const signedOverlap = Math.min(max2 - min1, min2 - max1);
-                let o = Math.abs(signedOverlap);
+                        if (mins < maxs) {
+                            o += mins;
+                        } else {
+                            o += maxs;
+                        }
+                    }
 
-                if (min1 > min2 && max1 < max2) {
-                    const mins = Math.abs(min1 - min2);
-                    const maxs = Math.abs(max1 - max2);
-
-                    if (mins < maxs) {
-                        o += mins;
-                    } else {
-                        o += maxs;
+                    if (o < overlap) {
+                        normal = axis.scale(Math.sign(signedOverlap));
+                        overlap = o;
                     }
                 }
 
-                if (o > overlap) continue;
+                polygon1 = p1;
+                polygon2 = p2;
+                areColliding = true;
 
-                normal = axis.scale(Math.sign(signedOverlap));
-                overlap = o;
-            }
-        } else {
-            const axis = p2.getCircleAxis(p1);
-            const [min1, max1] = p1.project(axis);
-            const [min2, max2] = p2.project(axis);
-
-            if (min1 > max2) return undefined;
-            if (min2 > max1) return undefined;
-
-            const signedOverlap = Math.min(max2 - min1, min2 - max1);
-            let o = Math.abs(signedOverlap);
-
-            if (min1 > min2 && max1 < max2) {
-                const mins = Math.abs(min1 - min2);
-                const maxs = Math.abs(max1 - max2);
-
-                if (mins < maxs) {
-                    o += mins;
-                } else {
-                    o += maxs;
-                }
-            }
-
-            if (o < overlap) {
-                normal = axis.scale(Math.sign(signedOverlap));
-                overlap = o;
+                yield [
+                    [
+                        normal,
+                        overlap
+                    ],
+                    [
+                        polygon1,
+                        polygon2
+                    ]
+                ];
             }
         }
-
-        return [
-            normal,
-            overlap
-        ];
     }
 
     export function signedDistanceOfPointFromLine(point: Vector, line: Line) {
@@ -259,6 +314,27 @@ export namespace Collision {
         return numerator / denominator;
     }
 
+    export function closestPointFromLine(point: Vector, line: Line) {
+        const axis = line.toAxis().normalize();
+        const projP0 = Vector.dot(point, axis);
+        const projP1 = Vector.dot(line.p1, axis);
+        const projP2 = Vector.dot(line.p2, axis);
+
+        if (projP0 < projP1) {
+            return line.p1;
+        }
+
+        if (projP0 > projP2) {
+            return line.p2;
+        }
+
+        const signedDistance = signedDistanceOfPointFromLine(point, line);
+        return point.clone()
+            .add(axis
+                .normal()
+                .scale(signedDistance));
+    }
+
     export function findContactPoint(
         p1: Polygon,
         p2: Polygon
@@ -269,14 +345,10 @@ export namespace Collision {
 
         for (const point of p1.points) {
             for (const line of p2.getLines()) {
-                const signedDistance = signedDistanceOfPointFromLine(point, line);
-                const closestPoint = point.clone()
-                    .add(line.toAxis()
-                        .normal()
-                        .normalize()
-                        .scale(signedDistance));
-
-                const distance = Math.abs(signedDistance);
+                const closestPoint = closestPointFromLine(point, line);
+                const distance = closestPoint.clone()
+                    .subtract(point)
+                    .magnitudeSquared;
 
                 if (Math.abs(minDistance - distance) < 0.01) {
                     contactPoints.push(closestPoint);

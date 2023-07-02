@@ -72,4 +72,8 @@ export class Vector {
         [this.x, this.y] = [-this.y, this.x];
         return this;
     }
+
+    nearZero() {
+        return this.magnitudeSquared < 0.1;
+    }
 }

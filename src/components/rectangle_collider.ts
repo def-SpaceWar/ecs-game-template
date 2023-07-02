@@ -10,12 +10,16 @@ export class RectangleCollider implements Collider {
         public offset: Vector = Vector.zero()
     ) {}
 
-    getPolygon(): Polygon {
-        return new Polygon([
+    getPolygons(): Polygon[] {
+        return [new Polygon([
             Vector.new(-this.dims.x / 2, -this.dims.y / 2).add(this.offset),
             Vector.new(-this.dims.x / 2, this.dims.y / 2).add(this.offset),
             Vector.new(this.dims.x / 2, this.dims.y / 2).add(this.offset),
             Vector.new(this.dims.x / 2, -this.dims.y / 2).add(this.offset)
-        ]);
+        ])];
+    }
+
+    inertia(mass: number): number {
+        return this.getPolygons()[0].inertia(mass);
     }
 }

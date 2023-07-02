@@ -6,7 +6,7 @@ import { Time } from "../util/time";
 export class MyTestBehavior implements Component {
     constructor(
         public entity: Entity,
-        public speed: number
+        public speed: number = 1_000
     ) { }
 }
 

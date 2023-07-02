@@ -10,11 +10,11 @@ export class CircleCollider implements Collider {
         public offset: Vector = Vector.zero()
     ) {}
 
-    getPolygon(): Polygon {
-        const points: Vector[] = [
-            Vector.new(this.diameter / 2, 0).add(this.offset)
-        ];
+    getPolygons(): Polygon[] {
+        return [new Polygon([], true, this.diameter / 2)];
+    }
 
-        return new Polygon(points, true, this.diameter / 2);
+    inertia(mass: number): number {
+        return this.getPolygons()[0].inertia(mass);
     }
 }

@@ -4,6 +4,8 @@ import { Acceleration } from "./components/acceleration";
 import { AngularVelocity } from "./components/angular_velocity";
 import { Circle } from "./components/circle";
 import { CircleCollider } from "./components/circle_collider";
+import { ComplexCollider } from "./components/complex_collider";
+import { Friction } from "./components/friction";
 import { Mass } from "./components/mass";
 import { Position } from "./components/position";
 import { Rectangle } from "./components/rectangle";
@@ -37,39 +39,85 @@ export class Game extends World {
             )
             .add(
                 Rectangle,
-                Vector.new(100, 100),
-                Color.new(0, 0, 255),
-                0
+                Vector.new(50, 10),
+                Color.new(0, 0, 0),
+                -2,
+                Vector.new(25, 0)
             )
+
+            // Circle Player
             .add(
                 Circle,
                 100,
-                Color.new(255, 0, 0),
-                -1
+                Color.new(255, 0, 0)
             )
             .add(
                 CircleCollider,
                 100
             )
+
+            // Square Player
+            //.add(
+            //    Rectangle,
+            //    Vector.new(100, 100),
+            //    Color.new(255, 0, 0)
+            //)
+            //.add(
+            //    RectangleCollider,
+            //    Vector.new(100, 100)
+            //)
+
+            // Capsule Player
+            //.add(
+            //    Rectangle,
+            //    Vector.new(100, 100),
+            //    Color.new(0, 0, 255),
+            //    -1
+            //)
+            //.add(
+            //    Circle,
+            //    100,
+            //    Color.new(255, 0, 0),
+            //    0,
+            //    Vector.new(0, 50)
+            //)
+            //.add(
+            //    Circle,
+            //    100,
+            //    Color.new(255, 0, 0),
+            //    0,
+            //    Vector.new(0, -50)
+            //)
+            //.add(
+            //    ComplexCollider,
+            //    [
+            //        ['rect', 0.5, Vector.new(100, 100), Vector.zero(), 0],
+            //        ['circle', 0.25, 99, Vector.new(0, 50)],
+            //        ['circle', 0.25, 99, Vector.new(0, -50)]
+            //    ]
+            //)
+
             .add(Velocity)
             .add(Mass)
             .add(Acceleration, Vector.new(0, 400))
             .add(Rotation)
-            .add(AngularVelocity, 6)
-            .add(MyTestBehavior, 1_000)
+            .add(AngularVelocity)
+            .add(Restitution, 0)
+            .add(Friction)
+            .add(MyTestBehavior)
             .add(WrapAroundScreen);
 
         this.createEntity()
             .add(
                 Position,
-                Vector.new(300, 600)
+                Vector.new(200, 600)
             )
             .add(
                 Rectangle,
                 Vector.new(300, 300),
                 Color.new(0, 255, 0)
             )
-            .add(Restitution, 0)
+            .add(Friction)
             .add(
                 RectangleCollider,
                 Vector.new(300, 300)
@@ -82,13 +130,39 @@ export class Game extends World {
             )
             .add(
                 Circle,
+                350,
+                Color.new(0, 255, 0)
+            )
+            .add(Friction)
+            .add(
+                CircleCollider,
+                350
+            );
+
+        this.createEntity()
+            .add(
+                Position,
+                Vector.new(100, 200)
+            )
+            .add(
+                Rectangle,
+                Vector.new(50, 200),
+                Color.new(100, 50, 0),
+                0,
+                Vector.new(0, 149)
+            )
+            .add(
+                Circle,
                 150,
                 Color.new(0, 255, 0)
             )
-            .add(Restitution, 0)
+            .add(Friction)
             .add(
-                CircleCollider,
-                150
+                ComplexCollider,
+                [
+                    ['circle', 1, 150, Vector.new(0, 0)],
+                    ['rect', 1, Vector.new(50, 200), Vector.new(0, 149), 0],
+                ]
             );
 
         this.createEntity()

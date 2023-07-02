@@ -1,7 +1,6 @@
 # TODO
 
-- Collision events that update every collision frame.
-    - These would be able to be used by other systems.
+- Make the game engine fun to use!
 
 # FAR FUTURE
 
