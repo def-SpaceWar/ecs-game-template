@@ -287,7 +287,6 @@ export namespace Collision {
 
                 polygon1 = p1;
                 polygon2 = p2;
-                areColliding = true;
 
                 yield [
                     [
