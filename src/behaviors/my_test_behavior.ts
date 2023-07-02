@@ -36,7 +36,6 @@ export function myTestBehaviorSystem(world: World) {
 
         behavior.canJump = false;
         wholeLoop: for (const collision of Collision.getCollisionEvents(e)) {
-            console.log('hi');
             for (const tag of world.getComponents(Tag, collision[1])) {
                 if (tag.tag == "platform" && position.pos.y < collision[3].y) {
                     behavior.canJump = true;

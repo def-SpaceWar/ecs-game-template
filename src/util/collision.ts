@@ -172,7 +172,6 @@ export namespace Collision {
         let overlap = Infinity;
         let polygon1 = new Polygon([]);
         let polygon2 = new Polygon([]);
-        let areColliding = false;
 
         for (const p1 of p1s) {
             p2Loop: for (const p2 of p2s) {
