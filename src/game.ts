@@ -1,6 +1,6 @@
 import { MyTestBehavior, myTestBehaviorSystem } from "./behaviors/my_test_behavior";
+import { WrapAroundScreen, wrapAroundScreenSystem } from "./behaviors/wrap_around_screen";
 import { Acceleration } from "./components/acceleration";
-import { AngularVelocity } from "./components/angular_velocity";
 import { Circle } from "./components/circle";
 import { CircleCollider } from "./components/circle_collider";
 import { ComplexCollider } from "./components/complex_collider";
@@ -12,6 +12,7 @@ import { RectangleCollider } from "./components/rectangle_collider";
 import { Restitution } from "./components/restitution";
 import { Rotation } from "./components/rotation";
 import { SimpleDrag } from "./components/simple_drag";
+import { Tag } from "./components/tag";
 import { Velocity } from "./components/velocity";
 import { World } from "./ecs";
 import { HEIGHT, WIDTH } from "./parameters";
@@ -30,21 +31,14 @@ export class Game extends World {
         ];
 
         this.renderSystems = [
-            // wrapAroundScreenSystem
-            debugColliderSystem
+            debugColliderSystem,
+            wrapAroundScreenSystem,
         ];
 
         this.createEntity()
             .add(
                 Position,
                 Vector.new(300, 100)
-            )
-            .add(
-                Rectangle,
-                Vector.new(50, 10),
-                Color.new(0, 0, 0),
-                -2,
-                Vector.new(25, 0)
             )
 
             // Circle Player
@@ -72,30 +66,30 @@ export class Game extends World {
             // Capsule Player
             .add(
                 Rectangle,
-                Vector.new(100, 100),
+                Vector.new(75, 75),
                 Color.new(255, 175, 0),
                 -1
             )
             .add(
                 Circle,
-                100,
+                75,
                 Color.new(255, 0, 0),
                 0,
-                Vector.new(0, 50)
+                Vector.new(0, 37.5)
             )
             .add(
                 Circle,
-                100,
+                75,
                 Color.new(255, 0, 0),
                 0,
-                Vector.new(0, -50)
+                Vector.new(0, -37.5)
             )
             .add(
                 ComplexCollider,
                 [
-                    ['rect', 0.6, Vector.new(100, 100), Vector.zero(), 0],
-                    ['circle', 0.2, 99, Vector.new(0, 50)],
-                    ['circle', 0.2, 99, Vector.new(0, -50)]
+                    ['rect', 0.6, Vector.new(75, 75), Vector.zero(), 0],
+                    ['circle', 0.2, 74, Vector.new(0, 37.5)],
+                    ['circle', 0.2, 74, Vector.new(0, -37.5)]
                 ]
             )
 
@@ -103,11 +97,13 @@ export class Game extends World {
             .add(Mass)
             .add(Acceleration, Vector.new(0, 400))
             .add(Rotation)
-            .add(AngularVelocity)
+            //.add(AngularVelocity)
             .add(Restitution)
             .add(Friction)
             .add(SimpleDrag)
-            .add(MyTestBehavior);
+            .add(MyTestBehavior)
+            .add(WrapAroundScreen)
+            ;
 
         this.createEntity()
             .add(
@@ -124,7 +120,9 @@ export class Game extends World {
             .add(
                 RectangleCollider,
                 Vector.new(300, 300)
-            );
+            )
+            .add(Tag, "platform")
+            ;
 
         this.createEntity()
             .add(
@@ -141,7 +139,9 @@ export class Game extends World {
             .add(
                 CircleCollider,
                 350
-            );
+            )
+            .add(Tag, "platform")
+            ;
 
         this.createEntity()
             .add(
@@ -168,7 +168,9 @@ export class Game extends World {
                     ['circle', 1, 150, Vector.new(0, 0)],
                     ['rect', 1, Vector.new(50, 200), Vector.new(0, 149), 0],
                 ]
-            );
+            )
+            .add(Tag, "platform")
+            ;
 
         this.createEntity()
             .add(
@@ -180,6 +182,7 @@ export class Game extends World {
                 Vector.new(WIDTH, HEIGHT),
                 Color.new(0, 175, 255),
                 5
-            );
+            )
+            ;
     }
 }
