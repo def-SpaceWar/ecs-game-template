@@ -6,6 +6,7 @@ import { SimpleDrag } from "../components/simple_drag";
 import { Velocity } from "../components/velocity";
 import { World } from "../ecs";
 import { Time } from "../util/time";
+import { Vector } from "../util/vector";
 
 export function forcesSystem(world: World) {
     const movingEntities = world.requireEntitiesAllOf([
@@ -16,23 +17,31 @@ export function forcesSystem(world: World) {
     for (const e of movingEntities) {
         const position = world.getComponent(Position, e)!;
         const velocity = world.getComponent(Velocity, e)!;
-        position.pos.add(
-            velocity.vel
-                .clone()
-                .scale(Time.deltaTime)
-        );
 
         const acceleration = world.getComponent(Acceleration, e);
         if (acceleration) velocity.vel
             .add(
                 acceleration.acc
                     .clone()
-                    .scale(Time.deltaTime)
+                    .scale(Time.deltaTime / 2)
+            );
+
+        position.pos.add(
+            velocity.vel
+                .clone()
+                .scale(Time.deltaTime)
+        );
+
+        if (acceleration) velocity.vel
+            .add(
+                acceleration.acc
+                    .clone()
+                    .scale(Time.deltaTime / 2)
             );
 
         const simpleDrag = world.getComponent(SimpleDrag, e);
         if (simpleDrag) {
-            velocity.vel.scale(Math.exp(Time.deltaTime * Math.log(simpleDrag.multiplier)));
+            velocity.vel.scale(Math.pow(simpleDrag.multiplier, Time.deltaTime));
         }
     }
 

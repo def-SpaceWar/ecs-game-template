@@ -23,8 +23,9 @@ export function debugColliderSystem(world: World) {
             if (position) polygon.translate(position.pos);
 
             ctx.save();
-            ctx.fillStyle = "rgba(0, 0, 255, 0.25)";
+            ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
             ctx.strokeStyle = "rgba(0, 0, 255)";
+            ctx.lineWidth = 2;
             if (polygon.isCircle) {
                 ctx.beginPath();
                 ctx.moveTo(...polygon.center.tuple());
