@@ -1,5 +1,5 @@
 import { Entity } from "../ecs";
-import { CIRCLE_POINTS } from "../parameters";
+import { CIRCLE_POINTS } from "../../parameters";
 import { Vector } from "./vector";
 
 export class Line {

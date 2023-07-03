@@ -1,10 +1,10 @@
-import { Position } from "../components/position";
-import { Tag } from "../components/tag";
-import { Velocity } from "../components/velocity";
-import { Component, Entity, World } from "../ecs";
-import { Collision } from "../util/collision";
-import { Input } from "../util/input";
-import { Time } from "../util/time";
+import { Position } from "../lib/components/position";
+import { Tag } from "../lib/components/tag";
+import { Velocity } from "../lib/components/velocity";
+import { Component, Entity, World } from "../lib/ecs";
+import { Collision } from "../lib/util/collision";
+import { Input } from "../lib/util/input";
+import { Time } from "../lib/util/time";
 
 export class MyTestBehavior implements Component {
     canJump = false;

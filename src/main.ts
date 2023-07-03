@@ -1,11 +1,12 @@
 import './style.css';
-import { System, World } from './ecs';
-import { HEIGHT, STARTING_SCENE, WIDTH } from './parameters';
-import { createRenderSystem } from './systems/render_system';
-import { Time } from './util/time';
-import { createFpsSystem } from './systems/fps_system';
-import { Input } from './util/input';
-import { createTpsSystem } from './systems/tps_system';
+import { System, World } from './lib/ecs';
+import { IS_DYNAMIC_SIZE, HEIGHT, STARTING_SCENE, WIDTH } from './parameters';
+import { createRenderSystem } from './lib/systems/render_system';
+import { Time } from './lib/util/time';
+import { createFpsSystem } from './lib/systems/fps_system';
+import { Input } from './lib/util/input';
+import { createTpsSystem } from './lib/systems/tps_system';
+import { cameraControllerSystem } from './lib/systems/camera_controller_system';
 
 onload = () => {
     World.setWorld(STARTING_SCENE);
@@ -13,8 +14,9 @@ onload = () => {
 
     const globalRenderSystems: System[] = [
         Time.createRenderTickSystem(),
+        cameraControllerSystem,
         createFpsSystem(25),
-        createRenderSystem(WIDTH, HEIGHT)
+        createRenderSystem(WIDTH, HEIGHT, IS_DYNAMIC_SIZE)
     ];
 
     (function render() {

@@ -4,6 +4,7 @@ import { Position } from "../components/position";
 import { RectangleCollider } from "../components/rectangle_collider";
 import { Rotation } from "../components/rotation";
 import { World } from "../ecs";
+import { Camera } from "../util/camera";
 import { Collider } from "./collision_system";
 import { ctx } from "./render_system";
 
@@ -14,6 +15,9 @@ export function debugColliderSystem(world: World) {
         ComplexCollider
     ]);
 
+    const cameraCoords = Camera.getCoords();
+    ctx.save();
+    ctx.translate(ctx.canvas.width / 2 - cameraCoords[0], ctx.canvas.height / 2 - cameraCoords[1]);
     for (const collider of colliders) {
         const position = world.getComponent(Position, collider.entity);
         const rotation = world.getComponent(Rotation, collider.entity);
@@ -31,8 +35,8 @@ export function debugColliderSystem(world: World) {
                 ctx.moveTo(...polygon.center.tuple());
                 ctx.ellipse(
                     ...polygon.center.tuple(),
-                    polygon.radius, polygon.radius, 
-                    rotation?.angle || 0, 
+                    polygon.radius, polygon.radius,
+                    rotation?.angle || 0,
                     0, Math.PI * 2);
                 ctx.closePath();
                 ctx.stroke();
@@ -51,4 +55,5 @@ export function debugColliderSystem(world: World) {
             ctx.restore();
         }
     }
+    ctx.restore();
 }

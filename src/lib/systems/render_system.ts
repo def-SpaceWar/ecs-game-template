@@ -3,6 +3,7 @@ import { Position } from "../components/position";
 import { Rectangle } from "../components/rectangle";
 import { Rotation } from "../components/rotation";
 import { Component, System, World, isComponent } from "../ecs";
+import { Camera } from "../util/camera";
 import { Vector } from "../util/vector";
 
 export interface Drawable extends Component {
@@ -12,15 +13,25 @@ export interface Drawable extends Component {
 
 export let ctx: CanvasRenderingContext2D;
 
-export function createRenderSystem(width: number, height: number): System {
+export function createRenderSystem(width: number, height: number, isDynamic: boolean): System {
     ctx = document
         .getElementById('app')!
         .appendChild(document
             .createElement('canvas'))
         .getContext("2d")!
 
-    ctx.canvas.width = width;
-    ctx.canvas.height = height;
+    if (!isDynamic) {
+        ctx.canvas.width = width;
+        ctx.canvas.height = height;
+    } else {
+        ctx.canvas.width = window.innerWidth;
+        ctx.canvas.height = window.innerHeight;
+
+        addEventListener("resize", () => {
+            ctx.canvas.width = window.innerWidth;
+            ctx.canvas.height = window.innerHeight;
+        });
+    }
 
     return (world: World) => {
         ctx.clearRect(0, 0, width, height);
@@ -31,17 +42,21 @@ export function createRenderSystem(width: number, height: number): System {
         ]);
         drawables.sort((a, b) => b.zIndex - a.zIndex);
 
+        const cameraCoords = Camera.getCoords();
         for (const drawable of drawables) {
             const position = world.getComponent(Position, drawable.entity)!;
             const rotation = world.getComponent(Rotation, drawable.entity)!;
 
-            draw(drawable, ctx, position, rotation);
+            draw(drawable, ctx, cameraCoords, position, rotation);
         }
     };
 }
 
-function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, position?: Position, rotation?: Rotation) {
+function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, cameraCoords: [number, number], position?: Position, rotation?: Rotation) {
     ctx.save();
+    if (position?.isWorldSpace) {
+        ctx.translate(ctx.canvas.width / 2 - cameraCoords[0], ctx.canvas.height / 2 - cameraCoords[1]);
+    }
     if (position) ctx.translate(position.pos.x, position.pos.y);
     ctx.rotate(rotation?.angle || 0);
     ctx.translate(drawable.offset.x, drawable.offset.y);
