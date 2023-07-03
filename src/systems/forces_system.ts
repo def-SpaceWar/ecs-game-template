@@ -6,7 +6,6 @@ import { SimpleDrag } from "../components/simple_drag";
 import { Velocity } from "../components/velocity";
 import { World } from "../ecs";
 import { Time } from "../util/time";
-import { Vector } from "../util/vector";
 
 export function forcesSystem(world: World) {
     const movingEntities = world.requireEntitiesAllOf([
@@ -58,7 +57,7 @@ export function forcesSystem(world: World) {
 
         const simpleDrag = world.getComponent(SimpleDrag, e);
         if (simpleDrag) {
-            angularVelocity.vel *= Math.exp(Time.deltaTime * Math.log(simpleDrag.multiplier));
+            angularVelocity.vel *= Math.pow(simpleDrag.multiplier, Time.deltaTime);
         }
     }
 }
