@@ -2,6 +2,7 @@ import { Circle } from "../components/circle";
 import { Position } from "../components/position";
 import { Rectangle } from "../components/rectangle";
 import { Rotation } from "../components/rotation";
+import { Sprite } from "../components/sprite";
 import { Component, System, World, isComponent } from "../ecs";
 import { Camera } from "../util/camera";
 import { Vector } from "../util/vector";
@@ -38,7 +39,8 @@ export function createRenderSystem(width: number, height: number, isDynamic: boo
 
         const drawables = world.findComponentsOfTypes<Drawable>([
             Rectangle,
-            Circle
+            Circle,
+            Sprite
         ]);
         drawables.sort((a, b) => b.zIndex - a.zIndex);
 
@@ -77,6 +79,12 @@ function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, cameraCoords: [
         );
         ctx.closePath();
         ctx.fill();
+    } else if (isComponent(drawable, Sprite)) {
+        ctx.drawImage(
+            drawable.image,
+            drawable.sx, drawable.sy, drawable.sw, drawable.sh,
+            ...drawable.dims.clone().scale(-.5).tuple(), ...drawable.dims.tuple()
+        );
     }
     ctx.restore();
 }

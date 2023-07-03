@@ -19,11 +19,20 @@ import { collisionSystem } from "../lib/systems/collision_system";
 import { debugColliderSystem } from "../lib/systems/debug_collider_system";
 import { forcesSystem } from "../lib/systems/forces_system";
 import { Color } from "../lib/util/color";
+import { loadImage } from "../lib/util/load_image";
 import { Vector } from "../lib/util/vector";
 import { HEIGHT, WIDTH } from "../parameters";
 import { MyTestBehavior, myTestBehaviorSystem } from "../user_scripts/my_test_behavior";
+import sprite from '../assets/sprite_PNG98773.png';
+import { Sprite } from "../lib/components/sprite";
 
 export class Game extends World {
+    playerImg: HTMLImageElement;
+
+    async load(): Promise<void> {
+        this.playerImg = await loadImage(sprite);
+    }
+
     setup(): void {
         this.systems = [
             forcesSystem,
@@ -48,24 +57,11 @@ export class Game extends World {
                 Vector.new(300, 100)
             )
             .add(
-                Rectangle,
-                Vector.new(75, 75),
-                Color.new(255, 175, 0),
-                -1
-            )
-            .add(
-                Circle,
-                75,
-                Color.new(255, 0, 0),
-                0,
-                Vector.new(0, 37.5)
-            )
-            .add(
-                Circle,
-                75,
-                Color.new(255, 0, 0),
-                0,
-                Vector.new(0, -37.5)
+                Sprite,
+                Vector.new(175, 175),
+                this.playerImg,
+                -2,
+                Vector.zero()
             )
             .add(
                 ComplexCollider,

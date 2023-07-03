@@ -1,6 +1,6 @@
 # TODO
 
-- Camera (make it an entity, so there can be multiple and have a Camera.mainCamera!)
+- Images (with a loading system so stuff doesnt take time loading)
 - Text
 - UI Elements (Input.mouseX,Y,Input.mouseDown,Input.mouseUp)
     - Example: Button

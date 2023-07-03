@@ -37,17 +37,18 @@ export type System = (world: World) => void;
 export abstract class World {
     private static currentWorld: World;
 
-    static setWorld(Type: new () => World) {
+    static async setWorld(Type: new () => World) {
         this.currentWorld = new Type();
+        await this.currentWorld.load();
+        this.currentWorld.setup();
     }
 
     static getWorld() {
         return this.currentWorld;
     }
 
-    constructor() {
-        this.setup();
-    }
+    constructor() {}
+    async load(): Promise<void> {}
     abstract setup(): void;
     renderSystems: System[] = [];
     systems: System[] = [];

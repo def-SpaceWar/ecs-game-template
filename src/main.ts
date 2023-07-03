@@ -8,8 +8,8 @@ import { Input } from './lib/util/input';
 import { createTpsSystem } from './lib/systems/tps_system';
 import { cameraControllerSystem } from './lib/systems/camera_controller_system';
 
-onload = () => {
-    World.setWorld(STARTING_SCENE);
+onload = async () => {
+    await World.setWorld(STARTING_SCENE);
     Input.initKeys();
 
     const globalRenderSystems: System[] = [
