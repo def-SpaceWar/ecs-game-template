@@ -18,4 +18,5 @@
 
 # FAR FUTURE
 
+- WEBGL instead of 2D Canvas
 - WASM: probably Rust

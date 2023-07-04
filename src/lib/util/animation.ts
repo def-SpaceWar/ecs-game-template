@@ -13,9 +13,7 @@ export class Keyframe<T extends Component> {
     constructor(
         public readonly Targets: (new(...args: any[]) => T)[],
         public readonly propertyMap: PropertyMap<T, keyof T>[],
-        public readonly timeLength: number,
-        public readonly isRelative = false,
-        public readonly isSmooth = false
+        public readonly timeLength: number
     ) { }
 }
 
