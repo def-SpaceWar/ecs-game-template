@@ -6,7 +6,7 @@ import { Camera } from "../util/camera";
 import { Time } from "../util/time";
 import { Vector } from "../util/vector";
 
-export function cameraControllerSystem(world: World) {
+export function cameraSystem(world: World) {
     const cameras = world.findComponents(CameraController);
     if (!Camera.mainCamera) Camera.mainCamera = cameras[0];
 

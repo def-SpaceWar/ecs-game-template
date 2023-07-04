@@ -6,7 +6,7 @@ import { Time } from './lib/util/time';
 import { createFpsSystem } from './lib/systems/fps_system';
 import { Input } from './lib/util/input';
 import { createTpsSystem } from './lib/systems/tps_system';
-import { cameraControllerSystem } from './lib/systems/camera_controller_system';
+import { cameraSystem } from './lib/systems/camera_system';
 
 onload = async () => {
     await World.setWorld(STARTING_SCENE);
@@ -14,7 +14,7 @@ onload = async () => {
 
     const globalRenderSystems: System[] = [
         Time.createRenderTickSystem(),
-        cameraControllerSystem,
+        cameraSystem,
         createFpsSystem(25),
         createRenderSystem(WIDTH, HEIGHT, IS_DYNAMIC_SIZE)
     ];
