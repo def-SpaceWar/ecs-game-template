@@ -1,7 +1,7 @@
 import { System } from "../ecs";
 import { Time } from "../util/time";
 
-export function createFpsSystem(sampleSize: number): System {
+export function createDebugFpsSystem(sampleSize: number): System {
     const fpsText = document.getElementById('app')!.appendChild(
         document.createElement('p')
     );

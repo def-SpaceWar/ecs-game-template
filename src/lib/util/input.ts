@@ -1,3 +1,6 @@
+import { ctx } from "../systems/render_system";
+import { Vector } from "./vector";
+
 export namespace Input {
     export const keys: string[] = [];
     let hasInit = false;
@@ -20,5 +23,18 @@ export namespace Input {
     export const getKey = (k: string) => {
         if (keys.indexOf(k) != -1) return true;
         return false;
+    };
+
+    let _mouseX = 0, _mouseY = 0;
+    export const getMousePos = () => Vector.new(_mouseX, _mouseY);
+
+    export const initMouse = () => {
+        if (!hasInit) {
+            document.addEventListener('mousemove', e => {
+                const boundingRect = ctx.canvas.getBoundingClientRect();
+                _mouseX = e.x - boundingRect.left;
+                _mouseY = e.y - boundingRect.top;
+            });
+        }
     };
 }

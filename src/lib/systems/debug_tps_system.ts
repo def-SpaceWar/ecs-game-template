@@ -1,7 +1,7 @@
 import { System } from "../ecs";
 import { Time } from "../util/time";
 
-export function createTpsSystem(sampleSize: number): System {
+export function createDebugTpsSystem(sampleSize: number): System {
     const tpsText = document.getElementById('app')!.appendChild(
         document.createElement('p')
     );
