@@ -49,7 +49,7 @@ export function animationSystem(world: World) {
                 }
 
                 animation.isUpdated = true;
-            } else if (animation.isContinuous) {
+            } else if (animation.isContinuous && currentKeyframe.isRelative) {
                 for (const propertyMap of currentKeyframe.propertyMaps) {
                     const target = world.getComponent(propertyMap.Target, entity);
 
