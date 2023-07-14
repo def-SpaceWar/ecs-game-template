@@ -10,7 +10,7 @@
     - spriteSheetRenderSystem that updates Sprite based on SpriteSheet
     - Obviously animations will work fine with this
 - Directional colliders (collide from only up not down etc.)
-- Make the game engine fun to use!
+- Make the game engine fun to use and append features!
 
 # FAR FUTURE
 
