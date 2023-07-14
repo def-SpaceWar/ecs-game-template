@@ -28,12 +28,23 @@ export namespace Input {
     let _mouseX = 0, _mouseY = 0;
     export const getMousePos = () => Vector.new(_mouseX, _mouseY);
 
+    let _mouseDown = false;
+    export const getMouseDown = () => _mouseDown;
+
     export const initMouse = () => {
         if (!hasInit) {
             document.addEventListener('mousemove', e => {
                 const boundingRect = ctx.canvas.getBoundingClientRect();
                 _mouseX = e.x - boundingRect.left;
                 _mouseY = e.y - boundingRect.top;
+            });
+
+            document.addEventListener('mousedown', _ => {
+                _mouseDown = true;
+            });
+
+            document.addEventListener('mouseup', _ => {
+                _mouseDown = false;
             });
         }
     };

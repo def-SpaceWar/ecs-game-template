@@ -1,10 +1,15 @@
 import { Component, Entity } from "../ecs";
 import { AnimationData } from "../util/animation";
 
-export class AnimationController implements Component {
+export class AnimationController<T extends Component> implements Component {
+    currentAnimation: string;
+    animations: AnimationData<T>[];
+
     constructor(
         public entity: Entity,
-        public animations: AnimationData[],
-        public currentAnimation = animations[0].name
-    ) {}
+        ...animations: AnimationData<T>[]
+    ) {
+        this.animations = animations;
+        this.currentAnimation = animations[0].name;
+    }
 }

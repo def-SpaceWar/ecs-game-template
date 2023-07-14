@@ -6,7 +6,7 @@ export class Tag implements Component {
         public tag: string
     ) {
         if (tag[0] == tag[0].toUpperCase()) {
-            throw new Error("Tags must be lowercase");
+            throw new Error("Tags must be lowercase! (Preferable snake_cased)");
         }
     }
 }

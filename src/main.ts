@@ -10,7 +10,6 @@ import { cameraSystem } from './lib/systems/camera_system';
 
 onload = async () => {
     await World.setWorld(STARTING_SCENE);
-    Input.initKeys();
 
     const globalRenderSystems: System[] = [
         Time.createRenderTickSystem(),
@@ -19,6 +18,7 @@ onload = async () => {
         createRenderSystem(WIDTH, HEIGHT, IS_DYNAMIC_SIZE)
     ];
 
+    Input.initKeys();
     Input.initMouse();
 
     (function render() {

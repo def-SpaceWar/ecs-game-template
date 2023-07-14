@@ -25,6 +25,9 @@ import { HEIGHT, WIDTH } from "../parameters";
 import { MyTestBehavior, myTestBehaviorSystem } from "../user_scripts/my_test_behavior";
 import sprite from '../assets/sprite_PNG98773.png';
 import { Sprite } from "../lib/components/sprite";
+import { animationSystem } from "../lib/systems/animation_system";
+import { AnimationController } from "../lib/components/animation_controller";
+import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
 
 export class Game extends World {
     playerImg: HTMLImageElement;
@@ -41,6 +44,7 @@ export class Game extends World {
         ];
 
         this.renderSystems = [
+            animationSystem,
             debugColliderSystem,
         ];
 
@@ -162,6 +166,39 @@ export class Game extends World {
                 Color.new(0, 175, 255),
                 5
             )
+            ;
+
+        this.createEntity()
+            .add(
+                Position,
+                Vector.new(400, 300)
+            )
+            .add(
+                Rectangle,
+                Vector.new(200, 10),
+                Color.new(0, 100, 255)
+            )
+            .add(
+                RectangleCollider,
+                Vector.new(200, 10)
+            )
+            .add(
+                AnimationController,
+                AnimationData.continuous(
+                    "move_side_to_side",
+                    Keyframe.relative(
+                        1,
+                        new PropertyMap(Position, "pos", Vector.new(100, 0))
+                    ),
+                    Keyframe.relative(
+                        1,
+                        new PropertyMap(Position, "pos", Vector.new(-100, 0))
+                    )
+                )
+            )
+            .add(Friction)
+            .add(Restitution)
+            .add(Tag, "platform")
             ;
     }
 }
