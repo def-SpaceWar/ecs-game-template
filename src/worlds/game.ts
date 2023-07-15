@@ -30,6 +30,7 @@ import { AnimationController } from "../lib/components/animation_controller";
 import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
 import { TextRenderer } from "../lib/components/text_renderer";
 import { Gradient } from "../lib/util/gradient";
+import { MovingPlatform, movingPlatformSystem } from "../user_scripts/moving_platform";
 
 export class Game extends World {
     playerImg: HTMLImageElement = new Image();
@@ -48,6 +49,7 @@ export class Game extends World {
         this.renderSystems = [
             animationSystem,
             //debugColliderSystem,
+            movingPlatformSystem,
         ];
 
         this.createEntity()
@@ -192,7 +194,39 @@ export class Game extends World {
                 Position,
                 Vector.new(400, 300)
             )
+            .add(
+                AnimationController,
+                AnimationData.static<Keyframe<Velocity> | Keyframe<Acceleration>>(
+                    "move1",
+                    Keyframe.static(
+                        0,
+                        PropertyMap.new(Velocity, "vel", Vector.new(0, 0))
+                    ),
+                    Keyframe.static(
+                        Infinity,
+                        PropertyMap.new(Acceleration, "acc", Vector.new(100, 0))
+                    )
+                ),
+                AnimationData.static<Keyframe<Velocity> | Keyframe<Acceleration>>(
+                    "move2",
+                    Keyframe.static(
+                        0,
+                        PropertyMap.new(Velocity, "vel", Vector.new(0, 0))
+                    ),
+                    Keyframe.static(
+                        Infinity,
+                        PropertyMap.new(Acceleration, "acc", Vector.new(-100, 0))
+                    )
+                )
+            )
+            .add(
+                MovingPlatform,
+                Vector.new(400, 300),
+                Vector.new(800, 300)
+            )
+            .add(Tag, "platform")
             .add(Velocity)
+            .add(Acceleration)
             .add(
                 Rectangle,
                 Vector.new(200, 10),
@@ -202,23 +236,8 @@ export class Game extends World {
                 RectangleCollider,
                 Vector.new(200, 10)
             )
-            .add(
-                AnimationController,
-                AnimationData.static(
-                    "move_side_to_side",
-                    Keyframe.static(
-                        5,
-                        PropertyMap.new(Velocity, "vel", Vector.new(100, 0))
-                    ),
-                    Keyframe.static(
-                        5,
-                        PropertyMap.new(Velocity, "vel", Vector.new(-100, 0))
-                    )
-                )
-            )
             .add(Friction)
             .add(Restitution)
-            .add(Tag, "platform")
             ;
     }
 }

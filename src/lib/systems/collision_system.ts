@@ -27,7 +27,7 @@ export type ColliderInfo = [
 export function collisionSystem(world: World) {
     Collision.resetCollisions();
 
-    const colliders = world.findComponentsOfTypes<Collider>([
+    const colliders = world.findComponentsOfTypesArray<Collider>([
         RectangleCollider,
         CircleCollider,
         ComplexCollider

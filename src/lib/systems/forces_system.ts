@@ -8,12 +8,7 @@ import { World } from "../ecs";
 import { Time } from "../util/time";
 
 export function forcesSystem(world: World) {
-    const movingEntities = world.requireEntitiesAllOf([
-        Position,
-        Velocity
-    ]);
-
-    for (const e of movingEntities) {
+    for (const e of world.requireEntitiesAllOf([Position, Velocity])) {
         const position = world.getComponent(Position, e)!;
         const velocity = world.getComponent(Velocity, e)!;
 
@@ -44,7 +39,7 @@ export function forcesSystem(world: World) {
         }
     }
 
-    const rotatingEntities = world.requireEntitiesAllOf([
+    const rotatingEntities = world.requireEntitiesAllOfArray([
         Rotation,
         AngularVelocity
     ]);

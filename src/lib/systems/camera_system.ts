@@ -7,14 +7,12 @@ import { Time } from "../util/time";
 import { Vector } from "../util/vector";
 
 export function cameraSystem(world: World) {
-    const cameras = world.findComponents(CameraController);
-    if (!Camera.mainCamera) Camera.mainCamera = cameras[0];
+    for (const camera of world.findComponents(CameraController)) {
+        if (!Camera.mainCamera) Camera.mainCamera = camera;
 
-    const tags = world.findComponents(Tag);
-    for (const camera of cameras) {
         const avgPos = Vector.zero();
         let tagCount = 0;
-        for (const tag of tags) {
+        for (const tag of world.findComponents(Tag)) {
             if (tag.tag == camera.centerTag) {
                 tagCount++;
                 const position = world.getComponent(Position, tag.entity);

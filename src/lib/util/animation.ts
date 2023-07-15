@@ -34,7 +34,7 @@ export class Keyframe<T extends Component> {
 }
 
 export class AnimationData<T extends Component> {
-    static static<T extends Component>(name: string, ...keyframes: Keyframe<T>[]) {
+    static static<K extends Keyframe<any>>(name: string, ...keyframes: K[]) {
         return new this(name, keyframes);
     }
 
@@ -66,6 +66,7 @@ export namespace AnimationManager {
             if (animation.name != animationName) continue;
             animation.currentKeyframe = 0;
             animation.currentKeyframeLength = animation.keyframes[0].timeLength;
+            animation.isUpdated = false;
         }
         animationController.currentAnimation = animationName;
     }

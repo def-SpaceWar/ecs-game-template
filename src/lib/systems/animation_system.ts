@@ -9,8 +9,7 @@ export function animationSystem(world: World) {
         for (const animation of animationController.animations) {
             if (animation.name != animationController.currentAnimation) continue;
 
-            animation.currentKeyframeLength -= Time.renderDeltaTime;
-            if (animation.currentKeyframeLength <= 0) {
+            if (animation.currentKeyframeLength < 0) {
                 animation.currentKeyframe += 1;
 
                 if (animation.currentKeyframe >= animation.keyframes.length) {
@@ -44,7 +43,11 @@ export function animationSystem(world: World) {
                             target[propertyMap.key] += propertyMap.value;
                         }
                     } else {
-                        target[propertyMap.key] = propertyMap.value;
+                        if ((target[propertyMap.key] as unknown) instanceof Vector) {
+                            (target[propertyMap.key] as unknown as Vector) = (propertyMap.value as unknown as Vector).clone();
+                        } else {
+                            target[propertyMap.key] = propertyMap.value;
+                        }
                     }
                 }
 
@@ -71,6 +74,8 @@ export function animationSystem(world: World) {
                     }
                 }
             }
+
+            animation.currentKeyframeLength -= Time.renderDeltaTime;
         }
     }
 }

@@ -1,14 +1,12 @@
 import { CameraController } from "../components/camera_controller";
-import { Entity, World } from "../ecs";
+import { ctx } from "../systems/render_system";
 
 export namespace Camera {
     export let mainCamera: CameraController;
 
-    export function setMainCamera(world: World, entity: Entity) {
-        mainCamera = world.getComponent(CameraController, entity)!;
-    }
-
     export function getCoords(): [number, number] {
-        return mainCamera.pos.tuple();
+        return mainCamera
+            ? mainCamera.pos.tuple()
+            : [ctx.canvas.width / 2, ctx.canvas.height / 2];
     }
 }

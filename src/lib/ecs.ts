@@ -47,8 +47,8 @@ export abstract class World {
         return this.currentWorld;
     }
 
-    constructor() {}
-    async load(): Promise<void> {}
+    constructor() { }
+    async load(): Promise<void> { }
     abstract setup(): void;
     renderSystems: System[] = [];
     systems: System[] = [];
@@ -77,42 +77,66 @@ export abstract class World {
         this.components.push(component);
     }
 
-    requireEntitiesAllOf(ComponentTypes: ComponentClass[]): Entity[] {
-        const entities: Entity[] = [];
-        for (let e = 0; e < this.entityCount; e++) entities.push(e);
-
-        for (const ComponentType of ComponentTypes) {
-            for (let i = 0; i < entities.length; i++) {
-                const e = entities[i];
-                let isSufficient = false;
+    *requireEntitiesAllOf(ComponentTypes: ComponentClass[]): Generator<Entity, void, unknown> {
+        entityLoop: for (let e = 0; e < this.entityCount; e++) {
+            for (const ComponentType of ComponentTypes) {
+                let hasComponent = false;
                 for (const component of this.components) {
                     if (component.entity != e) continue;
-                    isSufficient = isSufficient || component instanceof ComponentType;
+                    hasComponent = hasComponent || isComponent(component, ComponentType);
                 }
-                if (isSufficient) continue;
-                entities.splice(i, 1);
-                i--;
+                if (!hasComponent) continue entityLoop;
             }
+            yield e;
+        }
+    }
+
+    requireEntitiesAllOfArray(ComponentTypes: ComponentClass[]): Entity[] {
+        const entities: Entity[] = [];
+
+        entityLoop: for (let e = 0; e < this.entityCount; e++) {
+            for (const ComponentType of ComponentTypes) {
+                let hasComponent = false;
+                for (const component of this.components) {
+                    if (component.entity != e) continue;
+                    hasComponent = hasComponent || isComponent(component, ComponentType);
+                }
+                if (!hasComponent) continue entityLoop;
+            }
+            entities.push(e);
         }
 
         return entities;
     }
 
-    requireEntitiesAnyOf(ComponentTypes: ComponentClass[]): Entity[] {
-        const entities: Entity[] = [];
-        for (let e = 0; e < this.entityCount; e++) entities.push(e);
-
-        for (let i = 0; i < entities.length; i++) {
-            const e = entities[i];
-            let isSufficient = false;
+    *requireEntitiesAnyOf(ComponentTypes: ComponentClass[]): Generator<Entity, void, unknown> {
+        entityLoop: for (let e = 0; e < this.entityCount; e++) {
             for (const ComponentType of ComponentTypes) {
+                let hasComponent = false;
                 for (const component of this.components) {
                     if (component.entity != e) continue;
-                    isSufficient = isSufficient || component instanceof ComponentType;
+                    hasComponent = hasComponent || isComponent(component, ComponentType);
                 }
-                if (isSufficient) continue;
-                entities.splice(i, 1);
-                i--;
+                if (!hasComponent) continue;
+                yield e;
+                continue entityLoop;
+            }
+        }
+    }
+
+    requireEntitiesAnyOfArray(ComponentTypes: ComponentClass[]): Entity[] {
+        const entities: Entity[] = [];
+
+        entityLoop: for (let e = 0; e < this.entityCount; e++) {
+            for (const ComponentType of ComponentTypes) {
+                let hasComponent = false;
+                for (const component of this.components) {
+                    if (component.entity != e) continue;
+                    hasComponent = hasComponent || isComponent(component, ComponentType);
+                }
+                if (!hasComponent) continue;
+                entities.push(e);
+                continue entityLoop;
             }
         }
 
@@ -130,7 +154,17 @@ export abstract class World {
         }
     }
 
-    getComponents<T extends Component>(
+    *getComponents<T extends Component>(
+        Type: new (...args: any) => T,
+        entity: Entity
+    ): Generator<T, void, unknown> {
+        for (const component of this.components) {
+            if (component.entity != entity) continue;
+            if (isComponent(component, Type)) yield component;
+        }
+    }
+
+    getComponentsArray<T extends Component>(
         Type: new (...args: any) => T,
         entity: Entity
     ): T[] {
@@ -142,7 +176,20 @@ export abstract class World {
         return comps;
     }
 
-    getComponentsOfTypes<T extends Component>(
+    *getComponentsOfTypes<T extends Component>(
+        Types: (new (...args: any[]) => T)[],
+        entity: Entity
+    ): Generator<T, void, unknown> {
+        for (const Type of Types) {
+            for (const component of this.components) {
+                if (component.entity != entity) continue;
+                if (!isComponent(component, Type)) continue;
+                yield component as T;
+            }
+        }
+    }
+
+    getComponentsOfTypesArray<T extends Component>(
         Types: (new (...args: any[]) => T)[],
         entity: Entity
     ): T[] {
@@ -166,7 +213,16 @@ export abstract class World {
         }
     }
 
-    findComponents<T extends Component>(
+    *findComponents<T extends Component>(
+        Type: new (...args: any) => T
+    ): Generator<T, void, unknown> {
+        for (const component of this.components) {
+            if (!isComponent(component, Type)) continue;
+            yield component;
+        }
+    }
+
+    findComponentsArray<T extends Component>(
         Type: new (...args: any) => T
     ): T[] {
         const comps: T[] = [];
@@ -177,14 +233,25 @@ export abstract class World {
         return comps;
     }
 
-    findComponentsOfTypes<T extends Component>(
+    *findComponentsOfTypes<T extends Component>(
+        Types: (new (...args: any[]) => T)[]
+    ): Generator<T, void, unknown> {
+        for (const component of this.components) {
+            for (const Type of Types) {
+                if (!isComponent(component, Type)) continue;
+                yield component;
+            }
+        }
+    }
+
+    findComponentsOfTypesArray<T extends Component>(
         Types: (new (...args: any[]) => T)[]
     ): T[] {
         const comps: T[] = [];
         for (const component of this.components) {
             for (const Type of Types) {
                 if (!isComponent(component, Type)) continue;
-                comps.push(component as T);
+                comps.push(component);
             }
         }
         return comps;

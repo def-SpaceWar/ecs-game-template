@@ -43,7 +43,8 @@ export function createRenderSystem(width: number, height: number, isDynamic: boo
     return (world: World) => {
         ctx.clearRect(0, 0, width, height);
 
-        const drawables = world.findComponentsOfTypes<Drawable>([
+        const cameraCoords = Camera.getCoords();
+        const drawables = world.findComponentsOfTypesArray<Drawable>([
             Rectangle,
             Circle,
             Sprite,
@@ -51,7 +52,6 @@ export function createRenderSystem(width: number, height: number, isDynamic: boo
         ]);
         drawables.sort((a, b) => b.zIndex - a.zIndex);
 
-        const cameraCoords = Camera.getCoords();
         for (const drawable of drawables) {
             const position = world.getComponent(Position, drawable.entity)!;
             const rotation = world.getComponent(Rotation, drawable.entity)!;
