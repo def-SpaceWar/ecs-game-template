@@ -29,9 +29,10 @@ import { animationSystem } from "../lib/systems/animation_system";
 import { AnimationController } from "../lib/components/animation_controller";
 import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
 import { TextRenderer } from "../lib/components/text_renderer";
+import { Gradient } from "../lib/util/gradient";
 
 export class Game extends World {
-    playerImg: HTMLImageElement;
+    playerImg: HTMLImageElement = new Image();
 
     async load(): Promise<void> {
         this.playerImg = await loadImage(sprite);
@@ -80,7 +81,14 @@ export class Game extends World {
                 "Fake Water*",
                 "Comic Sans MS",
                 25,
-                Color.new(255, 0, 0),
+                Gradient.new(
+                    Vector.new(-100, 100),
+                    Vector.new(100, 100),
+                    [
+                        [0, Color.new(255, 0, 0)],
+                        [1, Color.new(255, 255, 255)],
+                    ]
+                ),
                 -2,
                 Vector.new(10, 0),
                 -Math.PI / 3 + 0.15,

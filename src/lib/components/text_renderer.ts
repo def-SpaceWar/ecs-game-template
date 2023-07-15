@@ -1,6 +1,5 @@
 import { Entity } from "../ecs";
-import { Drawable } from "../systems/render_system";
-import { Color } from "../util/color";
+import { Drawable, FillSource } from "../systems/render_system";
 import { Vector } from "../util/vector";
 
 export type TextOptions = {
@@ -15,7 +14,7 @@ export class TextRenderer implements Drawable {
         public text: string,
         public font: string,
         public fontSize: number,
-        public color: Color,
+        public color: FillSource,
         public zIndex: number = 0,
         public offset: Vector = Vector.zero(),
         public rotation: number = 0,

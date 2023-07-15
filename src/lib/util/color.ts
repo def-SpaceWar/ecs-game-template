@@ -1,11 +1,13 @@
-export class Color {
+import { FillSource } from "../systems/render_system";
+
+export class Color implements FillSource {
     static new(
         r: number,
         g: number,
         b: number,
         a = 1
     ): Color {
-        return new Color(r, g, b, a);
+        return new this(r, g, b, a);
     }
 
     constructor(

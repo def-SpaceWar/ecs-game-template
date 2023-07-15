@@ -8,6 +8,10 @@ import { Component, System, World, isComponent } from "../ecs";
 import { Camera } from "../util/camera";
 import { Vector } from "../util/vector";
 
+export interface FillSource {
+    toFillStyle(): string | CanvasGradient | CanvasPattern;
+}
+
 export interface Drawable extends Component {
     zIndex: number;
     offset: Vector;
