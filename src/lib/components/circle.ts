@@ -4,11 +4,13 @@ import { Color } from "../util/color";
 import { Vector } from "../util/vector";
 
 export class Circle implements Drawable {
+    rotation: number = 0;
+
     constructor(
         public entity: Entity,
         public diameter: number,
         public color: Color,
         public zIndex: number = 0,
-        public offset: Vector = Vector.zero()
+        public offset: Vector = Vector.zero(),
     ) {}
 }

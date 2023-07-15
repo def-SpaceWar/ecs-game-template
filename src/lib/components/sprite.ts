@@ -13,7 +13,8 @@ export class Sprite implements Drawable {
         public dims: Vector,
         public image: HTMLImageElement,
         public zIndex: number = 0,
-        public offset: Vector = Vector.zero()
+        public offset: Vector = Vector.zero(),
+        public rotation: number = 0
     ) {
         this.sw = image.width;
         this.sh = image.height;

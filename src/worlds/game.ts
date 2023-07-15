@@ -16,7 +16,7 @@ import { Tag } from "../lib/components/tag";
 import { Velocity } from "../lib/components/velocity";
 import { World } from "../lib/ecs";
 import { collisionSystem } from "../lib/systems/collision_system";
-import { debugColliderSystem } from "../lib/systems/debug_collider_system";
+//import { debugColliderSystem } from "../lib/systems/debug_collider_system";
 import { forcesSystem } from "../lib/systems/forces_system";
 import { Color } from "../lib/util/color";
 import { loadImage } from "../lib/util/load_image";
@@ -28,6 +28,7 @@ import { Sprite } from "../lib/components/sprite";
 import { animationSystem } from "../lib/systems/animation_system";
 import { AnimationController } from "../lib/components/animation_controller";
 import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
+import { TextRenderer } from "../lib/components/text_renderer";
 
 export class Game extends World {
     playerImg: HTMLImageElement;
@@ -45,7 +46,7 @@ export class Game extends World {
 
         this.renderSystems = [
             animationSystem,
-            debugColliderSystem,
+            //debugColliderSystem,
         ];
 
         this.createEntity()
@@ -64,8 +65,7 @@ export class Game extends World {
                 Sprite,
                 Vector.new(175, 175),
                 this.playerImg,
-                -2,
-                Vector.zero()
+                -2
             )
             .add(
                 ComplexCollider,
@@ -74,6 +74,17 @@ export class Game extends World {
                     ['circle', 0.2, 74, Vector.new(0, 37.5)],
                     ['circle', 0.2, 74, Vector.new(0, -37.5)]
                 ]
+            )
+            .add(
+                TextRenderer,
+                "Fake Water*",
+                "Comic Sans MS",
+                25,
+                Color.new(255, 0, 0),
+                -2,
+                Vector.new(10, 0),
+                -Math.PI / 3 + 0.15,
+                Vector.new(1, 3)
             )
             .add(Velocity)
             .add(Mass)
@@ -173,6 +184,7 @@ export class Game extends World {
                 Position,
                 Vector.new(400, 300)
             )
+            .add(Velocity)
             .add(
                 Rectangle,
                 Vector.new(200, 10),
@@ -184,15 +196,15 @@ export class Game extends World {
             )
             .add(
                 AnimationController,
-                AnimationData.continuous(
+                AnimationData.static(
                     "move_side_to_side",
-                    Keyframe.relative(
-                        1,
-                        new PropertyMap(Position, "pos", Vector.new(100, 0))
+                    Keyframe.static(
+                        5,
+                        PropertyMap.new(Velocity, "vel", Vector.new(100, 0))
                     ),
-                    Keyframe.relative(
-                        1,
-                        new PropertyMap(Position, "pos", Vector.new(-100, 0))
+                    Keyframe.static(
+                        5,
+                        PropertyMap.new(Velocity, "vel", Vector.new(-100, 0))
                     )
                 )
             )

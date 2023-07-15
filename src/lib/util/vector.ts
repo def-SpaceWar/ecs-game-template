@@ -7,6 +7,10 @@ export class Vector {
         return this.new(0, 0);
     }
 
+    static one(): Vector {
+        return this.new(1, 1);
+    }
+
     static undefined(): Vector {
         return this.new(Infinity, Infinity);
     }

@@ -204,10 +204,10 @@ function frictionResolution(
 
     const collisionArm1 = collisionPoint.clone().subtract(collider1.offset.clone().add(position1?.pos || Vector.zero()));
     const collisionArm2 = collisionPoint.clone().subtract(collider2.offset.clone().add(position2?.pos || Vector.zero()));
-    const inertia1 = (mass1 == Infinity)
+    const inertia1 = (mass1 == Infinity || !angularVelocity1)
         ? Infinity
         : collider1.inertia(mass1);
-    const inertia2 = (mass2 == Infinity)
+    const inertia2 = (mass2 == Infinity || !angularVelocity2)
         ? Infinity
         : collider2.inertia(mass2);
 

@@ -2,6 +2,14 @@ import { AnimationController } from "../components/animation_controller";
 import { Component } from "../ecs";
 
 export class PropertyMap<T extends Component, K extends keyof T> {
+    static new<T extends Component, K extends keyof T>(
+        Target: new (...args: any[]) => T,
+        key: K,
+        value: T[K]
+    ) {
+        return new this(Target, key, value);
+    }
+
     constructor(
         public readonly Target: new (...args: any[]) => T,
         public readonly key: K,
@@ -30,7 +38,7 @@ export class AnimationData<T extends Component> {
         return new this(name, keyframes);
     }
 
-    static continuous<T extends Component>(name: string, ...keyframes: Keyframe<T>[]) {
+    static continuous<K extends Keyframe<any>>(name: string, ...keyframes: K[]) {
         return new this(name, keyframes, true);
     }
 

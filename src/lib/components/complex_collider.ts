@@ -25,10 +25,10 @@ export class ComplexCollider implements Collider {
                         const offset = type[3];
                         const rotation = type[4];
                         polygons.push(new Polygon([
-                            Vector.new(-dims.x / 2, -dims.y / 2),
-                            Vector.new(-dims.x / 2, dims.y / 2),
                             Vector.new(dims.x / 2, dims.y / 2),
                             Vector.new(dims.x / 2, -dims.y / 2),
+                            Vector.new(-dims.x / 2, -dims.y / 2),
+                            Vector.new(-dims.x / 2, dims.y / 2),
                         ]).rotate(rotation).translate(offset))
                     }
                     break;

@@ -9,6 +9,7 @@ export class Rectangle implements Drawable {
         public dims: Vector,
         public color: Color,
         public zIndex: number = 0,
-        public offset: Vector = Vector.zero()
+        public offset: Vector = Vector.zero(),
+        public rotation: number = 0
     ) {}
 }

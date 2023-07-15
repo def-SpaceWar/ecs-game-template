@@ -3,6 +3,7 @@ import { Position } from "../components/position";
 import { Rectangle } from "../components/rectangle";
 import { Rotation } from "../components/rotation";
 import { Sprite } from "../components/sprite";
+import { TextRenderer } from "../components/text_renderer";
 import { Component, System, World, isComponent } from "../ecs";
 import { Camera } from "../util/camera";
 import { Vector } from "../util/vector";
@@ -10,6 +11,7 @@ import { Vector } from "../util/vector";
 export interface Drawable extends Component {
     zIndex: number;
     offset: Vector;
+    rotation: number;
 }
 
 export let ctx: CanvasRenderingContext2D;
@@ -40,7 +42,8 @@ export function createRenderSystem(width: number, height: number, isDynamic: boo
         const drawables = world.findComponentsOfTypes<Drawable>([
             Rectangle,
             Circle,
-            Sprite
+            Sprite,
+            TextRenderer
         ]);
         drawables.sort((a, b) => b.zIndex - a.zIndex);
 
@@ -62,11 +65,12 @@ function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, cameraCoords: [
     if (position) ctx.translate(position.pos.x, position.pos.y);
     ctx.rotate(rotation?.angle || 0);
     ctx.translate(drawable.offset.x, drawable.offset.y);
+    ctx.rotate(drawable.rotation);
     if (isComponent(drawable, Rectangle)) {
-        ctx.fillStyle = drawable.color.toString();
+        ctx.fillStyle = drawable.color.toFillStyle();
         ctx.fillRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
     } else if (isComponent(drawable, Circle)) {
-        ctx.fillStyle = drawable.color.toString();
+        ctx.fillStyle = drawable.color.toFillStyle();
         ctx.beginPath();
         ctx.ellipse(
             0,
@@ -85,6 +89,15 @@ function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, cameraCoords: [
             drawable.sx, drawable.sy, drawable.sw, drawable.sh,
             ...drawable.dims.clone().scale(-.5).tuple(), ...drawable.dims.tuple()
         );
+    } else if (isComponent(drawable, TextRenderer)) {
+        ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.font = `${drawable.fontSize}px ${drawable.font}`;
+        for (const key in drawable.textOptions) {
+            /** @ts-ignore - I know what I'm doing. */
+            ctx[key] = drawable.textOptions[key];
+        }
+        ctx.scale(...drawable.scale.tuple());
+        ctx.fillText(drawable.text, 0, 0);
     }
     ctx.restore();
 }

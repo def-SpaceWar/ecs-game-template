@@ -1,6 +1,7 @@
 # TODO
 
-- Text
+- Multiline/Paragraph Text
+- Animated Text
 - UI Elements (Input.mouseX,Y,Input.mouseDown,Input.mouseUp)
     - Example: Button
         - Components: Color, HoverColor, DisabledColor
@@ -10,6 +11,7 @@
     - spriteSheetRenderSystem that updates Sprite based on SpriteSheet
     - Obviously animations will work fine with this
 - Directional colliders (collide from only up not down etc.)
+- Constraints (like axels, and stuff rubber bands that hold stuff together)
 - Make the game engine fun to use and append features!
 
 # FAR FUTURE
