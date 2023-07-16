@@ -1,7 +1,8 @@
 # TODO
 
-- Multiline/Paragraph Text
-- Animated Text
+- Animated Text/Paragraph (as a system with a dialog component that holds all the original text)
+- Polygon colliders (somehow I havent added this yet) + Polygon renderers
+- Stroked versions of all the render components.
 - UI Elements (Input.mouseX,Y,Input.mouseDown,Input.mouseUp)
     - Example: Button
         - Components: Color, HoverColor, DisabledColor
@@ -14,7 +15,7 @@
 - Constraints (like axels, and stuff rubber bands that hold stuff together)
 - Make the game engine fun to use and append features!
 
-# FAR FUTURE
+## FAR FUTURE
 
 - WEBGL instead of 2D Canvas
 - WASM: probably Rust

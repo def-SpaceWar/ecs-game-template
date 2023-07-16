@@ -1,4 +1,5 @@
 import { Circle } from "../components/circle";
+import { ParagraphRenderer } from "../components/paragraph_renderer";
 import { Position } from "../components/position";
 import { Rectangle } from "../components/rectangle";
 import { Rotation } from "../components/rotation";
@@ -20,9 +21,12 @@ export interface Drawable extends Component {
 
 export let ctx: CanvasRenderingContext2D;
 
-export function createRenderSystem(width: number, height: number, isDynamic: boolean): System {
-    ctx = document
-        .getElementById('app')!
+export function createRenderSystem(
+    width: number,
+    height: number,
+    isDynamic: boolean
+): System {
+    ctx = document.getElementById('app')!
         .appendChild(document
             .createElement('canvas'))
         .getContext("2d")!
@@ -48,7 +52,8 @@ export function createRenderSystem(width: number, height: number, isDynamic: boo
             Rectangle,
             Circle,
             Sprite,
-            TextRenderer
+            TextRenderer,
+            ParagraphRenderer
         ]);
         drawables.sort((a, b) => b.zIndex - a.zIndex);
 
@@ -61,7 +66,13 @@ export function createRenderSystem(width: number, height: number, isDynamic: boo
     };
 }
 
-function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, cameraCoords: [number, number], position?: Position, rotation?: Rotation) {
+function draw(
+    drawable: Drawable,
+    ctx: CanvasRenderingContext2D,
+    cameraCoords: [number, number],
+    position?: Position,
+    rotation?: Rotation
+) {
     ctx.save();
     if (position?.isWorldSpace) {
         ctx.translate(ctx.canvas.width / 2 - cameraCoords[0], ctx.canvas.height / 2 - cameraCoords[1]);
@@ -102,6 +113,18 @@ function draw(drawable: Drawable, ctx: CanvasRenderingContext2D, cameraCoords: [
         }
         ctx.scale(...drawable.scale.tuple());
         ctx.fillText(drawable.text, 0, 0);
+    }  else if (isComponent(drawable, ParagraphRenderer)) {
+        ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.font = `${drawable.fontSize}px ${drawable.font}`;
+        for (const key in drawable.textOptions) {
+            /** @ts-ignore - I know what I'm doing. */
+            ctx[key] = drawable.textOptions[key];
+        }
+        ctx.scale(...drawable.scale.tuple());
+        const textCount = drawable.text.length;
+        for (let i = 0; i < textCount; i++) {
+            ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
+        }
     }
     ctx.restore();
 }

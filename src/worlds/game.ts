@@ -16,7 +16,7 @@ import { Tag } from "../lib/components/tag";
 import { Velocity } from "../lib/components/velocity";
 import { World } from "../lib/ecs";
 import { collisionSystem } from "../lib/systems/collision_system";
-//import { debugColliderSystem } from "../lib/systems/debug_collider_system";
+import { debugColliderSystem } from "../lib/systems/debug_collider_system";
 import { forcesSystem } from "../lib/systems/forces_system";
 import { Color } from "../lib/util/color";
 import { loadImage } from "../lib/util/load_image";
@@ -28,7 +28,7 @@ import { Sprite } from "../lib/components/sprite";
 import { animationSystem } from "../lib/systems/animation_system";
 import { AnimationController } from "../lib/components/animation_controller";
 import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
-import { TextRenderer } from "../lib/components/text_renderer";
+import { ParagraphRenderer } from "../lib/components/paragraph_renderer";
 import { Gradient } from "../lib/util/gradient";
 import { MovingPlatform, movingPlatformSystem } from "../user_scripts/moving_platform";
 
@@ -48,7 +48,7 @@ export class Game extends World {
 
         this.renderSystems = [
             animationSystem,
-            //debugColliderSystem,
+            debugColliderSystem,
             movingPlatformSystem,
         ];
 
@@ -79,16 +79,16 @@ export class Game extends World {
                 ]
             )
             .add(
-                TextRenderer,
-                "Fake Water*",
+                ParagraphRenderer,
+                ["Fake Water*"],
                 "Comic Sans MS",
                 25,
                 Gradient.new(
+                    Vector.new(100, -100),
                     Vector.new(-100, 100),
-                    Vector.new(100, 100),
                     [
-                        [0, Color.new(255, 0, 0)],
-                        [1, Color.new(255, 255, 255)],
+                        [0, Color.new(255, 255, 0)],
+                        [1, Color.new(0, 255, 255)],
                     ]
                 ),
                 -2,
@@ -196,26 +196,26 @@ export class Game extends World {
             )
             .add(
                 AnimationController,
-                AnimationData.static<Keyframe<Velocity> | Keyframe<Acceleration>>(
+                AnimationData.new(
                     "move1",
                     Keyframe.static(
                         0,
-                        PropertyMap.new(Velocity, "vel", Vector.new(0, 0))
+                        PropertyMap.new(Velocity, "vel", Vector.new(50, 0))
                     ),
                     Keyframe.static(
                         Infinity,
-                        PropertyMap.new(Acceleration, "acc", Vector.new(100, 0))
+                        PropertyMap.new(Acceleration, "acc", Vector.new(10, 0))
                     )
                 ),
-                AnimationData.static<Keyframe<Velocity> | Keyframe<Acceleration>>(
+                AnimationData.new(
                     "move2",
                     Keyframe.static(
                         0,
-                        PropertyMap.new(Velocity, "vel", Vector.new(0, 0))
+                        PropertyMap.new(Velocity, "vel", Vector.new(-50, 0))
                     ),
                     Keyframe.static(
                         Infinity,
-                        PropertyMap.new(Acceleration, "acc", Vector.new(-100, 0))
+                        PropertyMap.new(Acceleration, "acc", Vector.new(-10, 0))
                     )
                 )
             )

@@ -10,6 +10,8 @@ export class PropertyMap<T extends Component, K extends keyof T> {
         return new this(Target, key, value);
     }
 
+    target?: T;
+
     constructor(
         public readonly Target: new (...args: any[]) => T,
         public readonly key: K,
@@ -26,20 +28,21 @@ export class Keyframe<T extends Component> {
         return new this(timeLength, propertyMaps, true);
     }
 
+    static relativeContinuous<T extends Component>(timeLength: number, ...propertyMaps: PropertyMap<T, keyof T>[]) {
+        return new this(timeLength, propertyMaps, true, true);
+    }
+
     constructor(
         public readonly timeLength: number,
         public readonly propertyMaps: PropertyMap<T, keyof T>[],
-        public readonly isRelative: boolean = false
+        public readonly isRelative: boolean = false,
+        public readonly isContinuous: boolean = false
     ) { }
 }
 
 export class AnimationData<T extends Component> {
-    static static<K extends Keyframe<any>>(name: string, ...keyframes: K[]) {
+    static new(name: string, ...keyframes: Keyframe<any>[]) {
         return new this(name, keyframes);
-    }
-
-    static continuous<K extends Keyframe<any>>(name: string, ...keyframes: K[]) {
-        return new this(name, keyframes, true);
     }
 
     currentKeyframe: number;
@@ -48,8 +51,7 @@ export class AnimationData<T extends Component> {
 
     constructor(
         public readonly name: string,
-        public readonly keyframes: Keyframe<T>[],
-        public readonly isContinuous: boolean = false
+        public readonly keyframes: Keyframe<T>[]
     ) {
         if (name[0] == name[0].toUpperCase()) {
             throw new Error("Animation names must be lowercase! (Preferably snake_cased)");
