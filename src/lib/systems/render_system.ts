@@ -89,13 +89,13 @@ function draw(
     ctx.rotate(rotation?.angle || 0);
     ctx.translate(drawable.offset.x, drawable.offset.y);
     ctx.rotate(drawable.rotation);
-    if (isComponent({ component: drawable, Type: Rectangle })) {
+    if (isComponent(drawable, Rectangle)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
         ctx.fillRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
         ctx.strokeRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
-    } else if (isComponent({ component: drawable, Type: Circle })) {
+    } else if (isComponent(drawable, Circle)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
@@ -112,7 +112,7 @@ function draw(
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
-    } else if (isComponent({ component: drawable, Type: PolygonRenderer })) {
+    } else if (isComponent(drawable, PolygonRenderer)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
@@ -125,13 +125,13 @@ function draw(
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
-    } else if (isComponent({ component: drawable, Type: Sprite })) {
+    } else if (isComponent(drawable, Sprite)) {
         ctx.drawImage(
             drawable.image,
             drawable.sx, drawable.sy, drawable.sw, drawable.sh,
             ...drawable.dims.clone().scale(-.5).toTuple(), ...drawable.dims.toTuple()
         );
-    } else if (isComponent({ component: drawable, Type: TextRenderer })) {
+    } else if (isComponent(drawable, TextRenderer)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
@@ -147,7 +147,7 @@ function draw(
         }
         ctx.fillText(drawable.text, 0, 0);
         ctx.strokeText(drawable.text, 0, 0);
-    } else if (isComponent({ component: drawable, Type: ParagraphRenderer })) {
+    } else if (isComponent(drawable, ParagraphRenderer)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
