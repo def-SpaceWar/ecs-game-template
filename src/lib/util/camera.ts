@@ -6,7 +6,7 @@ export namespace Camera {
 
     export function getCoords(): [number, number] {
         return mainCamera
-            ? mainCamera.pos.tuple()
+            ? mainCamera.pos.toTuple()
             : [ctx.canvas.width / 2, ctx.canvas.height / 2];
     }
 }

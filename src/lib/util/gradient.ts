@@ -22,8 +22,8 @@ export class Gradient implements FillSource {
 
     init() {
         this.gradient = ctx.createLinearGradient(
-            ...this.start.tuple(),
-            ...this.end.tuple()
+            ...this.start.toTuple(),
+            ...this.end.toTuple()
         );
         for (const colorStop of this.colorStops) {
             this.gradient.addColorStop(

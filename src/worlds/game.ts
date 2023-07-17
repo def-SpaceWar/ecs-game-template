@@ -31,6 +31,11 @@ import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
 import { ParagraphRenderer } from "../lib/components/paragraph_renderer";
 import { Gradient } from "../lib/util/gradient";
 import { MovingPlatform, movingPlatformSystem } from "../user_scripts/moving_platform";
+import { AnimatedDialog } from "../lib/components/animated_dialog";
+import { animatedDialogSystem } from "../lib/systems/animated_dialog_system";
+import { Matrix } from "../lib/util/matrix";
+import { PolygonCollider } from "../lib/components/polygon_collider";
+import { PolygonRenderer } from "../lib/components/polygon_renderer";
 
 export class Game extends World {
     playerImg: HTMLImageElement = new Image();
@@ -47,9 +52,10 @@ export class Game extends World {
         ];
 
         this.renderSystems = [
-            animationSystem,
             debugColliderSystem,
+            animationSystem,
             movingPlatformSystem,
+            animatedDialogSystem,
         ];
 
         this.createEntity()
@@ -73,28 +79,35 @@ export class Game extends World {
             .add(
                 ComplexCollider,
                 [
-                    ['rect', 0.6, Vector.new(75, 75), Vector.zero(), 0],
+                    ['polygon', 0.6, [
+                        Vector.new(37.5, 37.5),
+                        Vector.new(37.5, -37.5),
+                        Vector.new(-37.5, -37.5),
+                        Vector.new(-37.5, 37.5),
+                    ], Vector.zero(), 0],
                     ['circle', 0.2, 74, Vector.new(0, 37.5)],
                     ['circle', 0.2, 74, Vector.new(0, -37.5)]
                 ]
             )
             .add(
                 ParagraphRenderer,
-                ["Fake Water*"],
+                [],
                 "Comic Sans MS",
                 25,
                 Gradient.new(
-                    Vector.new(100, -100),
-                    Vector.new(-100, 100),
-                    [
-                        [0, Color.new(255, 255, 0)],
-                        [1, Color.new(0, 255, 255)],
-                    ]
+                    Vector.new(100, -100), Vector.new(-100, 100),
+                    [[0, Color.new(255, 0, 0)], [1, Color.new(0, 0, 0)]]
                 ),
                 -2,
                 Vector.new(10, 0),
                 -Math.PI / 3 + 0.15,
-                Vector.new(1, 3)
+                Matrix.new(1, 1, -1, 2)
+            )
+            .add(
+                AnimatedDialog,
+                ["Fake Water*", "Lines", "Testing"],
+                10,
+                true
             )
             .add(Velocity)
             .add(Mass)
@@ -130,7 +143,7 @@ export class Game extends World {
         this.createEntity()
             .add(
                 Position,
-                Vector.new(600, 600)
+                Vector.new(550, 600)
             )
             .add(
                 Circle,
@@ -200,7 +213,7 @@ export class Game extends World {
                     "move1",
                     Keyframe.static(
                         0,
-                        PropertyMap.new(Velocity, "vel", Vector.new(50, 0))
+                        PropertyMap.new(Velocity, "vel", Vector.new(20, 0))
                     ),
                     Keyframe.static(
                         Infinity,
@@ -211,7 +224,7 @@ export class Game extends World {
                     "move2",
                     Keyframe.static(
                         0,
-                        PropertyMap.new(Velocity, "vel", Vector.new(-50, 0))
+                        PropertyMap.new(Velocity, "vel", Vector.new(-20, 0))
                     ),
                     Keyframe.static(
                         Infinity,
@@ -228,13 +241,23 @@ export class Game extends World {
             .add(Velocity)
             .add(Acceleration)
             .add(
-                Rectangle,
-                Vector.new(200, 10),
+                PolygonRenderer,
+                [
+                    Vector.new(100, 5),
+                    Vector.new(100, -5),
+                    Vector.new(-100, -5),
+                    Vector.new(-100, 5)
+                ],
                 Color.new(0, 100, 255)
             )
             .add(
-                RectangleCollider,
-                Vector.new(200, 10)
+                PolygonCollider,
+                [
+                    Vector.new(100, 5),
+                    Vector.new(100, -5),
+                    Vector.new(-100, -5),
+                    Vector.new(-100, 5)
+                ]
             )
             .add(Friction)
             .add(Restitution)

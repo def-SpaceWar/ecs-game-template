@@ -1,14 +1,10 @@
 export class Vector {
     static new(x: number, y: number): Vector {
-        return new Vector(x, y);
+        return new this(x, y);
     }
 
     static zero(): Vector {
         return this.new(0, 0);
-    }
-
-    static one(): Vector {
-        return this.new(1, 1);
     }
 
     static undefined(): Vector {
@@ -27,7 +23,7 @@ export class Vector {
         return this.new(Math.random(), Math.random()).normalize();
     }
 
-    constructor(public x: number, public y: number) { }
+    private constructor(public x: number, public y: number) { }
 
     get magnitudeSquared(): number {
         return this.x * this.x + this.y * this.y;
@@ -81,7 +77,7 @@ export class Vector {
         return this.magnitudeSquared < 0.0001;
     }
 
-    tuple(): [number, number] {
+    toTuple(): [number, number] {
         return [this.x, this.y];
     }
 }

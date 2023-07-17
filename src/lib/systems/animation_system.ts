@@ -54,6 +54,10 @@ export function animationSystem(world: World) {
 
                 animation.isUpdated = true;
             } else if (currentKeyframe.isContinuous && currentKeyframe.isRelative) {
+                const properRenderTime = Math.max(
+                    animation.currentKeyframeLength - Time.renderDeltaTime,
+                    0
+                );
                 for (const propertyMap of currentKeyframe.propertyMaps) {
                     if (!propertyMap.target) propertyMap.target = world.getComponent(propertyMap.Target, entity);
 
@@ -69,9 +73,9 @@ export function animationSystem(world: World) {
                         (propertyMap.target[propertyMap.key] as unknown as Vector)
                             .add((propertyMap.value as unknown as Vector)
                                 .clone()
-                                .scale(Time.renderDeltaTime));
+                                .scale(properRenderTime));
                     } else {
-                        propertyMap.target[propertyMap.key] += propertyMap.value * Time.renderDeltaTime;
+                        propertyMap.target[propertyMap.key] += propertyMap.value * properRenderTime;
                     }
                 }
             }

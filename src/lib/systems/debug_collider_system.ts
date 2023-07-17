@@ -1,5 +1,6 @@
 import { CircleCollider } from "../components/circle_collider";
 import { ComplexCollider } from "../components/complex_collider";
+import { PolygonCollider } from "../components/polygon_collider";
 import { Position } from "../components/position";
 import { RectangleCollider } from "../components/rectangle_collider";
 import { Rotation } from "../components/rotation";
@@ -12,6 +13,7 @@ export function debugColliderSystem(world: World) {
     const colliders = world.findComponentsOfTypes<Collider>([
         RectangleCollider,
         CircleCollider,
+        PolygonCollider,
         ComplexCollider
     ]);
 
@@ -32,9 +34,9 @@ export function debugColliderSystem(world: World) {
             ctx.save();
             if (polygon.isCircle) {
                 ctx.beginPath();
-                ctx.moveTo(...polygon.center.tuple());
+                ctx.moveTo(...polygon.center.toTuple());
                 ctx.ellipse(
-                    ...polygon.center.tuple(),
+                    ...polygon.center.toTuple(),
                     polygon.radius, polygon.radius,
                     rotation?.angle || 0,
                     0, Math.PI * 2);
@@ -43,11 +45,11 @@ export function debugColliderSystem(world: World) {
                 ctx.fill();
             } else {
                 ctx.beginPath();
-                ctx.moveTo(...polygon.center.tuple())
+                ctx.moveTo(...polygon.center.toTuple())
                 for (const point of polygon.points) {
-                    ctx.lineTo(...point.tuple())
+                    ctx.lineTo(...point.toTuple())
                 }
-                ctx.lineTo(...polygon.points[0].tuple())
+                ctx.lineTo(...polygon.points[0].toTuple())
                 ctx.closePath();
                 ctx.stroke();
                 ctx.fill();

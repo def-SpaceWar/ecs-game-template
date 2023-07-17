@@ -3,6 +3,7 @@ import { CircleCollider } from "../components/circle_collider";
 import { ComplexCollider } from "../components/complex_collider";
 import { Friction } from "../components/friction";
 import { Mass } from "../components/mass";
+import { PolygonCollider } from "../components/polygon_collider";
 import { Position } from "../components/position";
 import { RectangleCollider } from "../components/rectangle_collider";
 import { Restitution } from "../components/restitution";
@@ -30,6 +31,7 @@ export function collisionSystem(world: World) {
     const colliders = world.findComponentsOfTypesArray<Collider>([
         RectangleCollider,
         CircleCollider,
+        PolygonCollider,
         ComplexCollider
     ]);
 

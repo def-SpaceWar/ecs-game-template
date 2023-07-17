@@ -1,8 +1,9 @@
 import { Entity } from "../ecs";
-import { Drawable, FillSource } from "../systems/render_system";
+import { ColoredDrawable, FillSource } from "../systems/render_system";
+import { Color } from "../util/color";
 import { Vector } from "../util/vector";
 
-export class Circle implements Drawable {
+export class Circle implements ColoredDrawable {
     rotation: number = 0;
 
     constructor(
@@ -11,5 +12,7 @@ export class Circle implements Drawable {
         public color: FillSource,
         public zIndex: number = 0,
         public offset: Vector = Vector.zero(),
+        public strokeColor: FillSource = Color.black(),
+        public lineWidth: number = 1
     ) {}
 }

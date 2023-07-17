@@ -1,34 +1,77 @@
 // --- Entity ------------------------------------------------------------------
+/** 
+ * An entity is represented by a unique ID.
+ */
 export type Entity = number;
 
+/** 
+ * Wraps an entity ID for easy modification of data related to it.
+ */
 class EntityWrapper {
     constructor(public entity: Entity, private world: World) { }
-    add<T extends any[]>(Type: ComponentConstructor<T>, ...args: T) {
+    /**
+     * @param Type - The constructor/class of a Component.
+     * @param args - The arguments for initializing the component.
+     * @returns The entity wrapper back for more modification.
+     */
+    add<T extends any[]>(Type: ComponentConstructor<T>, ...args: T): this {
         this.world._addComponent(new Type(this.entity, ...args));
         return this;
     }
 }
 
 // --- Component ---------------------------------------------------------------
+/**
+ * All components link to an entity.
+ */
 export interface Component {
     entity: Entity
 }
 
+/**
+ * Interface of the constructor of a component which must take an entity as its
+ * first parameter.
+ * 
+ * @example ```typescript
+ * export class MyComponent implements Component { ... } 
+ * const componentConstructor: ComponentConstructor<any[]> = MyComponent;
+ * ```
+ */
 export interface ComponentConstructor<T extends any[]> {
     new(entity: Entity, ...args: T): Component;
 }
 
+/**
+ * Represents the type of a class of a Component.
+ * 
+ * @example ```typescript
+ * export class MyComponent implements Component { ... } 
+ * const componentClass: ComponentClass = MyComponent;
+ * ```
+ */
 type ComponentClass = new (...args: any) => Component;
+
+/**
+ * Represents a component that doesn't take any parameters.
+ * 
+ * @example ```typescript
+ * class Explosive extends UnitComponent { }
+ * ...
+ * this.createEntity()
+ * ...
+ * .add(Explosive)
+ * ...
+ * ```
+ */
+export abstract class UnitComponent {
+    constructor(public entity: Entity) { }
+}
 
 export function isComponent<T extends Component>(
     component: Component,
     Type: new (...args: any[]) => T
 ): component is T {
     return component instanceof Type;
-}
-
-export abstract class UnitComponent {
-    constructor(public entity: Entity) { }
 }
 
 // --- System ------------------------------------------------------------------

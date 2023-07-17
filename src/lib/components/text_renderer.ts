@@ -1,5 +1,7 @@
 import { Entity } from "../ecs";
-import { Drawable, FillSource } from "../systems/render_system";
+import { ColoredDrawable, FillSource } from "../systems/render_system";
+import { Color } from "../util/color";
+import { Matrix } from "../util/matrix";
 import { Vector } from "../util/vector";
 
 export type TextOptions = {
@@ -8,7 +10,7 @@ export type TextOptions = {
     textBaseline: CanvasTextBaseline;
 };
 
-export class TextRenderer implements Drawable {
+export class TextRenderer implements ColoredDrawable {
     constructor(
         public entity: Entity,
         public text: string,
@@ -18,11 +20,13 @@ export class TextRenderer implements Drawable {
         public zIndex: number = 0,
         public offset: Vector = Vector.zero(),
         public rotation: number = 0,
-        public scale: Vector = Vector.one(),
+        public scale: Vector | Matrix = Matrix.identity(),
         public textOptions: TextOptions = {
             direction: "ltr",
             textAlign: "center",
             textBaseline: "middle"
-        }
+        },
+        public strokeColor: FillSource = Color.black(),
+        public lineWidth: number = 1
     ) { }
 }

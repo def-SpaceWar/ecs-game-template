@@ -1,5 +1,6 @@
 import { Circle } from "../components/circle";
 import { ParagraphRenderer } from "../components/paragraph_renderer";
+import { PolygonRenderer } from "../components/polygon_renderer";
 import { Position } from "../components/position";
 import { Rectangle } from "../components/rectangle";
 import { Rotation } from "../components/rotation";
@@ -17,6 +18,12 @@ export interface Drawable extends Component {
     zIndex: number;
     offset: Vector;
     rotation: number;
+}
+
+export interface ColoredDrawable extends Drawable {
+    color: FillSource;
+    strokeColor: FillSource;
+    lineWidth: number;
 }
 
 export let ctx: CanvasRenderingContext2D;
@@ -51,6 +58,7 @@ export function createRenderSystem(
         const drawables = world.findComponentsOfTypesArray<Drawable>([
             Rectangle,
             Circle,
+            PolygonRenderer,
             Sprite,
             TextRenderer,
             ParagraphRenderer
@@ -81,11 +89,16 @@ function draw(
     ctx.rotate(rotation?.angle || 0);
     ctx.translate(drawable.offset.x, drawable.offset.y);
     ctx.rotate(drawable.rotation);
-    if (isComponent(drawable, Rectangle)) {
+    if (isComponent({ component: drawable, Type: Rectangle })) {
         ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.strokeStyle = drawable.strokeColor.toFillStyle();
+        ctx.lineWidth = drawable.lineWidth;
         ctx.fillRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
-    } else if (isComponent(drawable, Circle)) {
+        ctx.strokeRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
+    } else if (isComponent({ component: drawable, Type: Circle })) {
         ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.strokeStyle = drawable.strokeColor.toFillStyle();
+        ctx.lineWidth = drawable.lineWidth;
         ctx.beginPath();
         ctx.ellipse(
             0,
@@ -98,32 +111,79 @@ function draw(
         );
         ctx.closePath();
         ctx.fill();
-    } else if (isComponent(drawable, Sprite)) {
+        ctx.stroke();
+    } else if (isComponent({ component: drawable, Type: PolygonRenderer })) {
+        ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.strokeStyle = drawable.strokeColor.toFillStyle();
+        ctx.lineWidth = drawable.lineWidth;
+        ctx.beginPath();
+        ctx.moveTo(...drawable.points[0].toTuple());
+        for (const point of drawable.points) {
+            ctx.lineTo(...point.toTuple());
+        }
+        ctx.lineTo(...drawable.points[0].toTuple());
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    } else if (isComponent({ component: drawable, Type: Sprite })) {
         ctx.drawImage(
             drawable.image,
             drawable.sx, drawable.sy, drawable.sw, drawable.sh,
-            ...drawable.dims.clone().scale(-.5).tuple(), ...drawable.dims.tuple()
+            ...drawable.dims.clone().scale(-.5).toTuple(), ...drawable.dims.toTuple()
         );
-    } else if (isComponent(drawable, TextRenderer)) {
+    } else if (isComponent({ component: drawable, Type: TextRenderer })) {
         ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.strokeStyle = drawable.strokeColor.toFillStyle();
+        ctx.lineWidth = drawable.lineWidth;
         ctx.font = `${drawable.fontSize}px ${drawable.font}`;
         for (const key in drawable.textOptions) {
             /** @ts-ignore - I know what I'm doing. */
             ctx[key] = drawable.textOptions[key];
         }
-        ctx.scale(...drawable.scale.tuple());
+        if (drawable.scale instanceof Vector) {
+            ctx.scale(...drawable.scale.toTuple());
+        } else {
+            ctx.transform(...drawable.scale.toTuple(), 0, 0);
+        }
         ctx.fillText(drawable.text, 0, 0);
-    }  else if (isComponent(drawable, ParagraphRenderer)) {
+        ctx.strokeText(drawable.text, 0, 0);
+    } else if (isComponent({ component: drawable, Type: ParagraphRenderer })) {
         ctx.fillStyle = drawable.color.toFillStyle();
+        ctx.strokeStyle = drawable.strokeColor.toFillStyle();
+        ctx.lineWidth = drawable.lineWidth;
         ctx.font = `${drawable.fontSize}px ${drawable.font}`;
         for (const key in drawable.textOptions) {
             /** @ts-ignore - I know what I'm doing. */
             ctx[key] = drawable.textOptions[key];
         }
-        ctx.scale(...drawable.scale.tuple());
+        if (drawable.scale instanceof Vector) {
+            ctx.scale(...drawable.scale.toTuple());
+        } else {
+            ctx.transform(...drawable.scale.toTuple(), 0, 0);
+        }
         const textCount = drawable.text.length;
-        for (let i = 0; i < textCount; i++) {
-            ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
+        switch (drawable.textOptions.textBaseline) {
+            case "hanging":
+            case "top":
+                for (let i = 0; i < textCount; i++) {
+                    ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * i);
+                    ctx.strokeText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * i);
+                }
+                break;
+            case "alphabetic":
+            case "bottom":
+            case "ideographic":
+                for (let i = 0; i < textCount; i++) {
+                    ctx.fillText(drawable.text[i], 0, drawable.fontSize * i);
+                    ctx.strokeText(drawable.text[i], 0, drawable.fontSize * i);
+                }
+                break;
+            case "middle":
+                for (let i = 0; i < textCount; i++) {
+                    ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
+                    ctx.strokeText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
+                }
+                break;
         }
     }
     ctx.restore();
