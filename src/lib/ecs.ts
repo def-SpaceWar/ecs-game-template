@@ -1,6 +1,6 @@
-// --- Entity ------------------------------------------------------------------
-
 import { Name } from "./components/name";
+
+// --- Entity ------------------------------------------------------------------
 
 /** 
  * @description An entity is represented by a unique ID.
@@ -48,6 +48,7 @@ class EntityWrapper {
 }
 
 // --- Component ---------------------------------------------------------------
+
 /**
  * @description All components link to an entity.
  */
@@ -93,6 +94,7 @@ export function isComponent<T extends Component>(
 }
 
 // --- System ------------------------------------------------------------------
+
 /**
  * @description The type alias of a system.
  */
