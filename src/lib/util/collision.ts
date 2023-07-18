@@ -15,7 +15,7 @@ export class Polygon {
 
     constructor(public points: Vector[], public isCircle = false, public radius = 0) { }
 
-    rotate(angle: number) {
+    rotate(angle: number): this {
         this.center.rotate(angle);
 
         if (this.isCircle) return this;
@@ -27,7 +27,7 @@ export class Polygon {
         return this;
     }
 
-    translate(translation: Vector) {
+    translate(translation: Vector): this {
         for (const point of this.points) {
             point.add(translation);
         }
@@ -37,21 +37,18 @@ export class Polygon {
         return this;
     }
 
-    getLines(): Line[] {
-        const lines: Line[] = [];
-        if (this.isCircle) return lines;
+    *getLines(): Generator<Line, void, unknown> {
+        if (this.isCircle) return;
 
         for (let i = 0; i < this.points.length; i++) {
             const p1 = this.points[i].clone();
             const p2 = this.points[(i + 1) % this.points.length].clone();
 
-            lines.push(new Line(p1, p2));
+            yield new Line(p1, p2);
         }
-
-        return lines;
     }
 
-    *getAxes()  {
+    *getAxes(): Generator<Vector, void, unknown> {
         for (const line of this.getLines()) {
             yield line.toAxis().normalize();
         }
@@ -66,7 +63,10 @@ export class Polygon {
         let minDistance = Infinity;
 
         for (const line of other.getLines()) {
-            const closestPoint = Collision.closestPointFromLine(this.center, line);
+            const closestPoint = Collision.closestPointFromLine(
+                this.center,
+                line
+            );
             const distance = closestPoint.clone()
                 .subtract(this.center)
                 .magnitudeSquared;
@@ -138,10 +138,7 @@ export type CollisionInfo = [
     depth: number
 ];
 
-const reverseCollisionInfo = ([
-    normal,
-    depth
-]: CollisionInfo): CollisionInfo =>
+const reverseCollisionInfo = ([normal, depth]: CollisionInfo): CollisionInfo =>
     [
         normal.clone()
             .scale(-1),
@@ -156,11 +153,7 @@ export type CollisionEvent = [
 ];
 
 export function minimumAbsoluteValue(a: number, b: number): number {
-    if (Math.abs(a) < Math.abs(b)) {
-        return a;
-    }
-
-    return b;
+    return (Math.abs(a) < Math.abs(b)) ? a : b;
 }
 
 export namespace Collision {
@@ -302,7 +295,10 @@ export namespace Collision {
         }
     }
 
-    export function signedDistanceOfPointFromLine(point: Vector, line: Line) {
+    export function signedDistanceOfPointFromLine(
+        point: Vector,
+        line: Line
+    ): number {
         let numerator =
             (line.p2.x - line.p1.x) * (line.p1.y - point.y) -
             (line.p1.x - point.x) * (line.p2.y - line.p1.y);
@@ -312,7 +308,7 @@ export namespace Collision {
         return numerator / denominator;
     }
 
-    export function closestPointFromLine(point: Vector, line: Line) {
+    export function closestPointFromLine(point: Vector, line: Line): Vector {
         const axis = line.toAxis().normalize();
         const projP0 = Vector.dot(point, axis);
         const projP1 = Vector.dot(line.p1, axis);
@@ -333,10 +329,7 @@ export namespace Collision {
                 .scale(signedDistance));
     }
 
-    export function findContactPoint(
-        p1: Polygon,
-        p2: Polygon
-    ) {
+    export function findContactPoint(p1: Polygon, p2: Polygon): Vector {
         let contactPoints: Vector[] = [];
 
         let minDistance = Infinity;
@@ -360,7 +353,10 @@ export namespace Collision {
 
         for (const point of p2.points) {
             for (const line of p1.getLines()) {
-                const signedDistance = signedDistanceOfPointFromLine(point, line);
+                const signedDistance = signedDistanceOfPointFromLine(
+                    point,
+                    line
+                );
                 const closestPoint = point.clone()
                     .add(line.toAxis()
                         .normal()
@@ -385,18 +381,20 @@ export namespace Collision {
     }
 
     let collisionEvents: CollisionEvent[] = [];
-    export function* getCollisionEvents(e: Entity) {
+    export function* getCollisionEvents(
+        e: Entity
+    ): Generator<CollisionEvent, void, unknown> {
         for (const event of collisionEvents) {
             if (event[0] != e) continue;
             yield event;
         }
     }
 
-    export function resetCollisions() {
+    export function resetCollisions(): void {
         collisionEvents = [];
     }
 
-    export function addCollision([e1, e2, info, point]: CollisionEvent) {
+    export function addCollision([e1, e2, info, point]: CollisionEvent): void {
         collisionEvents.push([e1, e2, info, point]);
         collisionEvents.push([e2, e1, reverseCollisionInfo(info), point]);
     }
