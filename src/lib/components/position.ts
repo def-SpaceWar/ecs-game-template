@@ -6,7 +6,6 @@ import { Vector } from "../util/vector";
  */
 export class Position implements Component {
     /**
-     * 
      * @param entity Provided by an entity wrapper.
      * @param pos The position of the entity.
      * @param isWorldSpace Whether or not the entity's position should be

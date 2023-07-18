@@ -3,7 +3,7 @@ import { ColoredDrawable, FillSource } from "../systems/render_system";
 import { Color } from "../util/color";
 import { Vector } from "../util/vector";
 
-export class Rectangle implements ColoredDrawable {
+export class RectangleRenderer implements ColoredDrawable {
     constructor(
         public entity: Entity,
         public dims: Vector,

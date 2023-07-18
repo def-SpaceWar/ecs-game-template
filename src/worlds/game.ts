@@ -7,7 +7,7 @@ import { ComplexCollider } from "../lib/components/complex_collider";
 import { Friction } from "../lib/components/friction";
 import { Mass } from "../lib/components/mass";
 import { Position } from "../lib/components/position";
-import { Rectangle } from "../lib/components/rectangle";
+import { RectangleRenderer } from "../lib/components/rectangle_renderer";
 import { RectangleCollider } from "../lib/components/rectangle_collider";
 import { Restitution } from "../lib/components/restitution";
 import { Rotation } from "../lib/components/rotation";
@@ -24,7 +24,7 @@ import { Vector } from "../lib/util/vector";
 import { HEIGHT, WIDTH } from "../parameters";
 import { MyTestBehavior, myTestBehaviorSystem } from "../user_scripts/my_test_behavior";
 import sprite from '../assets/sprite_PNG98773.png';
-import { Sprite } from "../lib/components/sprite";
+import { SpriteRenderer } from "../lib/components/sprite_renderer";
 import { animationSystem } from "../lib/systems/animation_system";
 import { AnimationController } from "../lib/components/animation_controller";
 import { AnimationData, Keyframe, PropertyMap } from "../lib/util/animation";
@@ -71,7 +71,7 @@ export class Game extends World {
                 Vector.new(300, 100)
             )
             .add(
-                Sprite,
+                SpriteRenderer,
                 Vector.new(175, 175),
                 this.playerImg,
                 -2
@@ -127,7 +127,7 @@ export class Game extends World {
                 Vector.new(200, 600)
             )
             .add(
-                Rectangle,
+                RectangleRenderer,
                 Vector.new(300, 300),
                 Color.new(0, 255, 0)
             )
@@ -165,7 +165,7 @@ export class Game extends World {
                 Vector.new(100, 200)
             )
             .add(
-                Rectangle,
+                RectangleRenderer,
                 Vector.new(50, 200),
                 Color.new(100, 50, 0),
                 0,
@@ -195,7 +195,7 @@ export class Game extends World {
                 false
             )
             .add(
-                Rectangle,
+                RectangleRenderer,
                 Vector.new(WIDTH, HEIGHT),
                 Color.new(0, 175, 255),
                 5

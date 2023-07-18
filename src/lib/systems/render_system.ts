@@ -2,9 +2,9 @@ import { CircleRenderer } from "../components/circle_renderer";
 import { ParagraphRenderer } from "../components/paragraph_renderer";
 import { PolygonRenderer } from "../components/polygon_renderer";
 import { Position } from "../components/position";
-import { Rectangle } from "../components/rectangle";
+import { RectangleRenderer } from "../components/rectangle_renderer";
 import { Rotation } from "../components/rotation";
-import { Sprite } from "../components/sprite";
+import { SpriteRenderer } from "../components/sprite_renderer";
 import { TextRenderer } from "../components/text_renderer";
 import { Component, System, World, isComponent } from "../ecs";
 import { Camera } from "../util/camera";
@@ -47,6 +47,27 @@ export interface ColoredDrawable extends Drawable {
     lineWidth: number;
 }
 
+/**
+ * @description Options for rendering text.
+ */
+export type TextOptions = {
+    /**
+     * @description The direction to render the text in.
+     */
+    direction: CanvasDirection;
+    /**
+     * @description The horizontal alignment of the text.
+     */
+    textAlign: CanvasTextAlign;
+    /**
+     * @description The vertical alignment of the text.
+     */
+    textBaseline: CanvasTextBaseline;
+};
+
+/**
+ * @description The rendering context of the global render system.
+ */
 export let ctx: CanvasRenderingContext2D;
 
 export function createRenderSystem(
@@ -77,10 +98,10 @@ export function createRenderSystem(
 
         const cameraCoords = Camera.getCoords();
         const drawables = world.findComponentsOfTypesArray<Drawable>([
-            Rectangle,
+            RectangleRenderer,
             CircleRenderer,
             PolygonRenderer,
-            Sprite,
+            SpriteRenderer,
             TextRenderer,
             ParagraphRenderer
         ]);
@@ -110,7 +131,7 @@ function draw(
     ctx.rotate(rotation?.angle || 0);
     ctx.translate(drawable.offset.x, drawable.offset.y);
     ctx.rotate(drawable.rotation);
-    if (isComponent(drawable, Rectangle)) {
+    if (isComponent(drawable, RectangleRenderer)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
@@ -146,7 +167,7 @@ function draw(
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
-    } else if (isComponent(drawable, Sprite)) {
+    } else if (isComponent(drawable, SpriteRenderer)) {
         if (drawable.scale instanceof Vector) {
             ctx.scale(...drawable.scale.toTuple());
         } else {

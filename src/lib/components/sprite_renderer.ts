@@ -6,7 +6,7 @@ import { Vector } from "../util/vector";
 /**
  * @description Adds an image renderer to an entity.
  */
-export class Sprite implements Drawable {
+export class SpriteRenderer implements Drawable {
     /**
      * @description The x-coordinate of the image source.
      */

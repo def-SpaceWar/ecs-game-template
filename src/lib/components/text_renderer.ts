@@ -1,16 +1,27 @@
 import { Entity } from "../ecs";
-import { ColoredDrawable, FillSource } from "../systems/render_system";
+import { ColoredDrawable, FillSource, TextOptions } from "../systems/render_system";
 import { Color } from "../util/color";
 import { Matrix } from "../util/matrix";
 import { Vector } from "../util/vector";
 
-export type TextOptions = {
-    direction: CanvasDirection;
-    textAlign: CanvasTextAlign;
-    textBaseline: CanvasTextBaseline;
-};
-
+/**
+ * @description Adds single-lined text to an entity.
+ */
 export class TextRenderer implements ColoredDrawable {
+    /**
+     * @param entity Provided by an entity wrapper.
+     * @param text The text to render.
+     * @param font The font of the text.
+     * @param fontSize The size of the font.
+     * @param color The output color/fillStyle of the drawable.
+     * @param zIndex The z-index a drawable is rendered at.
+     * @param offset The positional offset a drawable is rendered at.
+     * @param rotation The rotational offset a drawable is rendered at.
+     * @param scale The scale/transformation to render the text at.
+     * @param textOptions The alignment options to render the text at.
+     * @param strokeColor The output strokeColor/strokeStyle of the drawable.
+     * @param lineWidth The lineWidth of the strokes of a drawable.
+     */
     constructor(
         public entity: Entity,
         public text: string,

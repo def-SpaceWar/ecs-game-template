@@ -7,9 +7,17 @@
             - tag.ts << Finished >>
             - mass.ts << Finished >>
             - name.ts << Finished >>
-            - sprite.ts << Finished >>
             - friction.ts << Finished >>
             - position.ts << Finished >>
+            - rotation.ts << Finished >>
+            - velocity.ts << Finished >>
+            - restitution.ts << Finished >>
+            - simple_drag.ts << Finished >>
+            - acceleration.ts << Finished >>
+            - text_renderer.ts << Finished >>
+            - animated_dialog.ts << In Progress >>
+            - ...
+            - sprite_renderer.ts << Finished >>
             - ...
         - systems
             - ...

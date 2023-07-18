@@ -1,9 +1,8 @@
 import { Entity } from "../ecs";
-import { ColoredDrawable, FillSource } from "../systems/render_system";
+import { ColoredDrawable, FillSource, TextOptions } from "../systems/render_system";
 import { Color } from "../util/color";
 import { Matrix } from "../util/matrix";
 import { Vector } from "../util/vector";
-import { TextOptions } from "./text_renderer";
 
 export class ParagraphRenderer implements ColoredDrawable {
     constructor(

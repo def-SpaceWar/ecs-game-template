@@ -10,7 +10,10 @@ export function animatedDialogSystem(world: World) {
         animatedDialog.partOfCharacter += Time.renderDeltaTime * animatedDialog.speed;
 
         if (animatedDialog.multiLine) {
-            var paragraph = world.getComponent(animatedDialog.entity, ParagraphRenderer);
+            var paragraph = world.getComponent(
+                animatedDialog.entity,
+                ParagraphRenderer
+            );
         } else {
             var text = world.getComponent(animatedDialog.entity, TextRenderer);
         }
@@ -21,11 +24,11 @@ export function animatedDialogSystem(world: World) {
             animatedDialog.partOfCharacter -= 1;
             animatedDialog.currentCharacter += 1;
 
-            if (animatedDialog.currentCharacter >= animatedDialog.lines[animatedDialog.currentLine].length) {
+            if (animatedDialog.currentCharacter >= animatedDialog.dialog[animatedDialog.currentLine].length) {
                 animatedDialog.currentLine++;
-                if (text) text.text = "";
+                if (text) text.text += " ";
                 animatedDialog.currentCharacter = 0;
-                if (animatedDialog.lines.length <= animatedDialog.currentLine) {
+                if (animatedDialog.dialog.length <= animatedDialog.currentLine) {
                     animatedDialog.isDone = true;
                     break;
                 }
@@ -33,9 +36,9 @@ export function animatedDialogSystem(world: World) {
 
             if (paragraph) {
                 if (!paragraph.text[animatedDialog.currentLine]) paragraph.text[animatedDialog.currentLine] = "";
-                paragraph.text[animatedDialog.currentLine] += animatedDialog.lines[animatedDialog.currentLine][animatedDialog.currentCharacter];
+                paragraph.text[animatedDialog.currentLine] += animatedDialog.dialog[animatedDialog.currentLine][animatedDialog.currentCharacter];
             } else if (text) {
-                text.text += animatedDialog.lines[animatedDialog.currentLine][animatedDialog.currentCharacter];
+                text.text += animatedDialog.dialog[animatedDialog.currentLine][animatedDialog.currentCharacter];
             }
         }
     }

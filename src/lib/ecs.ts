@@ -33,16 +33,31 @@ class EntityWrapper {
     /**
      * @description Takes a function that takes in an entity, and returns a
      * component, to add a component to the current entity. The reasons is for
-     * better intellisense when using parameters in a component. Not meant to be
-     * used for more experienced developers, it's to help beginners.
-     * @param component A function that takes an entity and returns a component.
+     * better intellisense when using parameters in a component. It can be also 
+     * used to add repeated component values and dynamically add components.
+     * @param component A function that takes an entity and returns 1 or a list
+     * of components.
      * @returns The entity wrapper back for more modification.
      * @example ```ts
-     * this.createEntity().addRaw(e => new Position(e, Vector.new(100, 100)));
+     * const customCoords = e => new Position(e, Vector.new(100, 100));
+     * this.createEntity().addCustom(customCoords);
+     * ```
+     * @example ```ts
+     * const customCoords2 = e => [new Position(e, Vector.new(100, 100))];
+     * this.createEntity().addCustom(customCoords2);
      * ```
      */
-    addRaw(component: (e: Entity) => Component): this {
-        this.world._addComponent(component(this.entity));
+    addCustom(
+        generateComponents: (e: Entity) => Component | Component[]
+    ): this {
+        const result = generateComponents(this.entity);
+        if (Array.isArray(result)) {
+            for (const component of result as Component[]) {
+                this.world._addComponent(component);
+            }
+        } else {
+            this.world._addComponent(result as Component);
+        }
         return this;
     }
 }
@@ -221,14 +236,14 @@ export abstract class World {
 
     /**
      * @description Queries all the entities.
-     * @param ComponentTypes All the component classes that must be on an 
+     * @param componentTypes All the component classes that must be on an 
      * entity.
      * @returns A generator of entities that satisfies the component 
      * requirements.
      */
-    *requireEntitiesAllOf(...ComponentTypes: ComponentClass[]): Generator<Entity, void, unknown> {
+    *requireEntitiesAllOf(...componentTypes: ComponentClass[]): Generator<Entity, void, unknown> {
         entityLoop: for (const e of this.getEntities()) {
-            for (const ComponentType of ComponentTypes) {
+            for (const ComponentType of componentTypes) {
                 let hasComponent = false;
                 for (const component of this.components) {
                     if (component.entity != e) continue;
@@ -242,15 +257,15 @@ export abstract class World {
 
     /**
      * @description Queries all the entities.
-     * @param ComponentTypes All the component classes that must be on an 
+     * @param componentTypes All the component classes that must be on an 
      * entity.
      * @returns A list of entities that satisfies the component requirements.
      */
-    requireEntitiesAllOfArray(...ComponentTypes: ComponentClass[]): Entity[] {
+    requireEntitiesAllOfArray(...componentTypes: ComponentClass[]): Entity[] {
         const entities: Entity[] = [];
 
         entityLoop: for (const e of this.getEntities()) {
-            for (const ComponentType of ComponentTypes) {
+            for (const ComponentType of componentTypes) {
                 let hasComponent = false;
                 for (const component of this.components) {
                     if (component.entity != e) continue;
@@ -266,14 +281,14 @@ export abstract class World {
 
     /**
      * @description Queries all the entities.
-     * @param ComponentTypes All of the component classes that an entity must
+     * @param componentTypes All of the component classes that an entity must
      * one or more of.
      * @returns A generator of entities that satisfies the component 
      * requirements.
      */
-    *requireEntitiesAnyOf(...ComponentTypes: ComponentClass[]): Generator<Entity, void, unknown> {
+    *requireEntitiesAnyOf(...componentTypes: ComponentClass[]): Generator<Entity, void, unknown> {
         entityLoop: for (const e of this.getEntities()) {
-            for (const ComponentType of ComponentTypes) {
+            for (const ComponentType of componentTypes) {
                 let hasComponent = false;
                 for (const component of this.components) {
                     if (component.entity != e) continue;
@@ -288,15 +303,15 @@ export abstract class World {
 
     /**
      * @description Queries all the entities.
-     * @param ComponentTypes All of the component classes that an entity must
+     * @param componentTypes All of the component classes that an entity must
      * one or more of.
      * @returns A list of entities that satisfies the component requirements.
      */
-    requireEntitiesAnyOfArray(...ComponentTypes: ComponentClass[]): Entity[] {
+    requireEntitiesAnyOfArray(...componentTypes: ComponentClass[]): Entity[] {
         const entities: Entity[] = [];
 
         entityLoop: for (const e of this.getEntities()) {
-            for (const ComponentType of ComponentTypes) {
+            for (const ComponentType of componentTypes) {
                 let hasComponent = false;
                 for (const component of this.components) {
                     if (component.entity != e) continue;
@@ -488,6 +503,12 @@ export abstract class World {
         return comps;
     }
 
+    /**
+     * @description Gets the name of an entity.
+     * @param entity The ID of the entity.
+     * @returns The name of the entity provided by the Name component or 
+     * "unnamed" if no name is found.
+     */
     getName(
         entity: Entity
     ): string {
