@@ -10,22 +10,23 @@ import { Collider } from "./collision_system";
 import { ctx } from "./render_system";
 
 export function debugColliderSystem(world: World) {
-    const colliders = world.findComponentsOfTypes<Collider>([
-        RectangleCollider,
-        CircleCollider,
-        PolygonCollider,
-        ComplexCollider
-    ]);
-
     const cameraCoords = Camera.getCoords();
     ctx.save();
     ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
     ctx.strokeStyle = "rgba(0, 0, 255)";
     ctx.lineWidth = 2;
     ctx.translate(ctx.canvas.width / 2 - cameraCoords[0], ctx.canvas.height / 2 - cameraCoords[1]);
-    for (const collider of colliders) {
-        const position = world.getComponent(Position, collider.entity);
-        const rotation = world.getComponent(Rotation, collider.entity);
+    for (
+        const collider of
+        world.findComponentsOfTypes<Collider>([
+            RectangleCollider,
+            CircleCollider,
+            PolygonCollider,
+            ComplexCollider
+        ])
+    ) {
+        const position = world.getComponent(collider.entity, Position);
+        const rotation = world.getComponent(collider.entity, Rotation);
 
         for (const polygon of collider.getPolygons()) {
             if (rotation) polygon.rotate(rotation.angle);

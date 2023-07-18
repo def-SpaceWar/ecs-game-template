@@ -17,14 +17,14 @@ export class MyTestBehavior implements Component {
 }
 
 export function myTestBehaviorSystem(world: World) {
-    for (const e of world.requireEntitiesAllOf([
+    for (const e of world.requireEntitiesAllOf(
         MyTestBehavior,
         Velocity,
         Position
-    ])) {
-        const behavior = world.getComponent(MyTestBehavior, e)!;
-        const velocity = world.getComponent(Velocity, e)!;
-        const position = world.getComponent(Position, e)!;
+    )) {
+        const behavior = world.getComponent(e, MyTestBehavior)!;
+        const velocity = world.getComponent(e, Velocity)!;
+        const position = world.getComponent(e, Position)!;
 
         if (Input.getKey("a")) velocity.vel.x -= behavior.speed * Time.deltaTime;
         if (Input.getKey("e") || Input.getKey("d")) velocity.vel.x += behavior.speed * Time.deltaTime;
@@ -34,7 +34,7 @@ export function myTestBehaviorSystem(world: World) {
 
         behavior.canJump = false;
         wholeLoop: for (const collision of Collision.getCollisionEvents(e)) {
-            for (const tag of world.getComponentsArray(Tag, collision[1])) {
+            for (const tag of world.getComponents(collision[1], Tag)) {
                 if (tag.tag == "platform" && position.pos.y < collision[3].y) {
                     behavior.canJump = true;
                     continue wholeLoop;

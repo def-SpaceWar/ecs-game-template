@@ -10,9 +10,9 @@ export function animatedDialogSystem(world: World) {
         animatedDialog.partOfCharacter += Time.renderDeltaTime * animatedDialog.speed;
 
         if (animatedDialog.multiLine) {
-            var paragraph = world.getComponent(ParagraphRenderer, animatedDialog.entity);
+            var paragraph = world.getComponent(animatedDialog.entity, ParagraphRenderer);
         } else {
-            var text = world.getComponent(TextRenderer, animatedDialog.entity);
+            var text = world.getComponent(animatedDialog.entity, TextRenderer);
         }
 
         if (!paragraph && !text) throw new Error("Missing text renderer on AnimatedDialog!");

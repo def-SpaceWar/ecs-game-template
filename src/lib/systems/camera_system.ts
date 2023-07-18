@@ -15,7 +15,7 @@ export function cameraSystem(world: World) {
         for (const tag of world.findComponents(Tag)) {
             if (tag.tag == camera.centerTag) {
                 tagCount++;
-                const position = world.getComponent(Position, tag.entity);
+                const position = world.getComponent(tag.entity, Position);
                 if (position) {
                     avgPos.add(position.pos);
                 }

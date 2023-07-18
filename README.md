@@ -2,8 +2,14 @@
 
 - Documentation!!!
     - lib (Only folder that needs documentation)
-        - ecs.ts << In Progress >>
-        - components
+        - ecs.ts << Finished >>
+        - components << In Progress >>
+            - tag.ts << Finished >>
+            - mass.ts << Finished >>
+            - name.ts << Finished >>
+            - sprite.ts << Finished >>
+            - friction.ts << Finished >>
+            - position.ts << Finished >>
             - ...
         - systems
             - ...
@@ -11,7 +17,7 @@
             - ...
 
 ```typescript
-EntityWrapper.bind((e: Entity) => (world: World) => void): EntityWrapper;
+EntityWrapper.bind((e: Entity) => System): EntityWrapper;
 ```
 - Bind!
     - EntityWrapper.bindRender((e: Entity) => (world: World) => void)
@@ -34,7 +40,7 @@ EntityWrapper.bind((e: Entity) => (world: World) => void): EntityWrapper;
     - spriteSheetRenderSystem that updates Sprite based on SpriteSheet
     - Obviously animations will work fine with this
 
-- Entity destruction handling
+- Entity destruction handling (It's already there, but there may be bugs to work out.)
     - Lifetime component and Lifetime system so users don't have to make it.
 
 - Directional colliders (collide from only up not down etc.)

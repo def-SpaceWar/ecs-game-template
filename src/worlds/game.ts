@@ -1,7 +1,7 @@
 import { Acceleration } from "../lib/components/acceleration";
 import { AngularVelocity } from "../lib/components/angular_velocity";
 import { CameraController } from "../lib/components/camera_controller";
-import { Circle } from "../lib/components/circle";
+import { CircleRenderer } from "../lib/components/circle_renderer";
 import { CircleCollider } from "../lib/components/circle_collider";
 import { ComplexCollider } from "../lib/components/complex_collider";
 import { Friction } from "../lib/components/friction";
@@ -146,7 +146,7 @@ export class Game extends World {
                 Vector.new(550, 600)
             )
             .add(
-                Circle,
+                CircleRenderer,
                 300,
                 Color.new(0, 255, 0)
             )
@@ -172,7 +172,7 @@ export class Game extends World {
                 Vector.new(0, 149)
             )
             .add(
-                Circle,
+                CircleRenderer,
                 150,
                 Color.new(0, 255, 0)
             )

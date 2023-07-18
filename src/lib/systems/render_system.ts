@@ -1,4 +1,4 @@
-import { Circle } from "../components/circle";
+import { CircleRenderer } from "../components/circle_renderer";
 import { ParagraphRenderer } from "../components/paragraph_renderer";
 import { PolygonRenderer } from "../components/polygon_renderer";
 import { Position } from "../components/position";
@@ -11,18 +11,39 @@ import { Camera } from "../util/camera";
 import { Vector } from "../util/vector";
 
 export interface FillSource {
+    /**
+     * @description Turns a FillSource into a fillStyle.
+     */
     toFillStyle(): string | CanvasGradient | CanvasPattern;
 }
 
 export interface Drawable extends Component {
+    /**
+     * @description The z-index a drawable is rendered at.
+     */
     zIndex: number;
+    /**
+     * @description The positional offset a drawable is rendered at.
+     */
     offset: Vector;
+    /**
+     * @description The rotational offset a drawable is rendered at.
+     */
     rotation: number;
 }
 
 export interface ColoredDrawable extends Drawable {
+    /**
+     * @description The output color/fillStyle of the drawable.
+     */
     color: FillSource;
+    /**
+     * @description The output strokeColor/strokeStyle of the drawable.
+     */
     strokeColor: FillSource;
+    /**
+     * @description The lineWidth of the strokes of the drawable.
+     */
     lineWidth: number;
 }
 
@@ -57,7 +78,7 @@ export function createRenderSystem(
         const cameraCoords = Camera.getCoords();
         const drawables = world.findComponentsOfTypesArray<Drawable>([
             Rectangle,
-            Circle,
+            CircleRenderer,
             PolygonRenderer,
             Sprite,
             TextRenderer,
@@ -66,8 +87,8 @@ export function createRenderSystem(
         drawables.sort((a, b) => b.zIndex - a.zIndex);
 
         for (const drawable of drawables) {
-            const position = world.getComponent(Position, drawable.entity)!;
-            const rotation = world.getComponent(Rotation, drawable.entity)!;
+            const position = world.getComponent(drawable.entity, Position)!;
+            const rotation = world.getComponent(drawable.entity, Rotation)!;
 
             draw(drawable, ctx, cameraCoords, position, rotation);
         }
@@ -95,7 +116,7 @@ function draw(
         ctx.lineWidth = drawable.lineWidth;
         ctx.fillRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
         ctx.strokeRect(-drawable.dims.x / 2, -drawable.dims.y / 2, drawable.dims.x, drawable.dims.y);
-    } else if (isComponent(drawable, Circle)) {
+    } else if (isComponent(drawable, CircleRenderer)) {
         ctx.fillStyle = drawable.color.toFillStyle();
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
@@ -126,6 +147,11 @@ function draw(
         ctx.fill();
         ctx.stroke();
     } else if (isComponent(drawable, Sprite)) {
+        if (drawable.scale instanceof Vector) {
+            ctx.scale(...drawable.scale.toTuple());
+        } else {
+            ctx.transform(...drawable.scale.toTuple(), 0, 0);
+        }
         ctx.drawImage(
             drawable.image,
             drawable.sx, drawable.sy, drawable.sw, drawable.sh,

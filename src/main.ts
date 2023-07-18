@@ -22,8 +22,9 @@ onload = async () => {
     Input.initMouse();
 
     (function render() {
-        for (const system of globalRenderSystems) system(World.getWorld());
-        for (const system of World.getWorld().renderSystems) system(World.getWorld());
+        const currentWorld = World.getWorld();
+        for (const system of globalRenderSystems) system(currentWorld);
+        for (const system of World.getWorld().renderSystems) system(currentWorld);
         requestAnimationFrame(render);
     })();
 
@@ -33,7 +34,8 @@ onload = async () => {
     ];
 
     setInterval(() => {
-        for (const system of globalSystems) system(World.getWorld());
-        for (const system of World.getWorld().systems) system(World.getWorld());
+        const currentWorld = World.getWorld();
+        for (const system of globalSystems) system(currentWorld);
+        for (const system of World.getWorld().systems) system(currentWorld);
     }, 0);
 };

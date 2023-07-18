@@ -8,11 +8,11 @@ import { World } from "../ecs";
 import { Time } from "../util/time";
 
 export function forcesSystem(world: World) {
-    for (const e of world.requireEntitiesAllOf([Position, Velocity])) {
-        const position = world.getComponent(Position, e)!;
-        const velocity = world.getComponent(Velocity, e)!;
+    for (const e of world.requireEntitiesAllOf(Position, Velocity)) {
+        const position = world.getComponent(e, Position)!;
+        const velocity = world.getComponent(e, Velocity)!;
 
-        const acceleration = world.getComponent(Acceleration, e);
+        const acceleration = world.getComponent(e, Acceleration);
         if (acceleration) velocity.vel
             .add(
                 acceleration.acc
@@ -33,24 +33,19 @@ export function forcesSystem(world: World) {
                     .scale(Time.deltaTime / 2)
             );
 
-        const simpleDrag = world.getComponent(SimpleDrag, e);
+        const simpleDrag = world.getComponent(e, SimpleDrag);
         if (simpleDrag) {
             velocity.vel.scale(Math.pow(simpleDrag.multiplier, Time.deltaTime));
         }
     }
 
-    const rotatingEntities = world.requireEntitiesAllOfArray([
-        Rotation,
-        AngularVelocity
-    ]);
-
-    for (const e of rotatingEntities) {
-        const rotation = world.getComponent(Rotation, e)!;
-        const angularVelocity = world.getComponent(AngularVelocity, e)!;
+    for (const e of world.requireEntitiesAllOf(Rotation, AngularVelocity)) {
+        const rotation = world.getComponent(e, Rotation)!;
+        const angularVelocity = world.getComponent(e, AngularVelocity)!;
 
         rotation.angle += angularVelocity.vel * Time.deltaTime;
 
-        const simpleDrag = world.getComponent(SimpleDrag, e);
+        const simpleDrag = world.getComponent(e, SimpleDrag);
         if (simpleDrag) {
             angularVelocity.vel *= Math.pow(simpleDrag.multiplier, Time.deltaTime);
         }

@@ -1,5 +1,4 @@
 import { AnimationController } from "../components/animation_controller";
-import { Name } from "../components/name";
 import { World } from "../ecs";
 import { Time } from "../util/time";
 import { Vector } from "../util/vector";
@@ -25,12 +24,12 @@ export function animationSystem(world: World) {
 
             if (!animation.isUpdated && (!currentKeyframe.isContinuous || !currentKeyframe.isRelative)) {
                 for (const propertyMap of currentKeyframe.propertyMaps) {
-                    if (!propertyMap.target) propertyMap.target = world.getComponent(propertyMap.Target, entity);
+                    if (!propertyMap.target) propertyMap.target = world.getComponent(entity, propertyMap.Target);
 
                     if (!propertyMap.target) {
                         throw new Error(
                             `${propertyMap.Target.name} not found on ` +
-                            `${world.getComponent(Name, entity)?.name || "Unnamed"} ` +
+                            `${world.getName(entity)} ` +
                             `[${entity}]!`
                         );
                     }
@@ -59,12 +58,12 @@ export function animationSystem(world: World) {
                     0
                 );
                 for (const propertyMap of currentKeyframe.propertyMaps) {
-                    if (!propertyMap.target) propertyMap.target = world.getComponent(propertyMap.Target, entity);
+                    if (!propertyMap.target) propertyMap.target = world.getComponent(entity, propertyMap.Target);
 
                     if (!propertyMap.target) {
                         throw new Error(
                             `${propertyMap.Target.name} not found on ` +
-                            `${world.getComponent(Name, entity)?.name || "Unnamed"} ` +
+                            `${world.getName(entity)} ` +
                             `[${entity}]!`
                         );
                     }

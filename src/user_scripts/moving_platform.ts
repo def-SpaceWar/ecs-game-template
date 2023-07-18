@@ -25,12 +25,12 @@ export class MovingPlatform implements Component {
 
 export function movingPlatformSystem(world: World) {
     for (const movingPlatform of world.findComponents(MovingPlatform)) {
-        const position = world.getComponent(Position, movingPlatform.entity)!;
+        const position = world.getComponent(movingPlatform.entity, Position)!;
         const projection = Vector.dot(position.pos, movingPlatform.axis);
         if (projection < movingPlatform.minProjection) {
             position.pos = movingPlatform.minPos.clone()
                 .add(movingPlatform.axis);
-            const animationController = world.getComponent(AnimationController, movingPlatform.entity)!;
+            const animationController = world.getComponent(movingPlatform.entity, AnimationController)!;
             if (animationController.currentAnimation != "move1") {
                 AnimationManager.setAnimation(
                     animationController,
@@ -40,7 +40,7 @@ export function movingPlatformSystem(world: World) {
         } else if (projection > movingPlatform.maxProjection) {
             position.pos = movingPlatform.maxPos.clone()
                 .subtract(movingPlatform.axis);
-            const animationController = world.getComponent(AnimationController, movingPlatform.entity)!;
+            const animationController = world.getComponent(movingPlatform.entity, AnimationController)!;
             if (animationController.currentAnimation != "move2") {
                 AnimationManager.setAnimation(
                     animationController,

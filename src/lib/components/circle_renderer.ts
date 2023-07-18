@@ -3,9 +3,15 @@ import { ColoredDrawable, FillSource } from "../systems/render_system";
 import { Color } from "../util/color";
 import { Vector } from "../util/vector";
 
-export class Circle implements ColoredDrawable {
+/**
+ * @description A component that is used to render a circle.
+ */
+export class CircleRenderer implements ColoredDrawable {
     rotation: number = 0;
 
+    /**
+     * @param diameter Diameter of the circle.
+     */
     constructor(
         public entity: Entity,
         public diameter: number,

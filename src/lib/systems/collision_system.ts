@@ -36,8 +36,8 @@ export function collisionSystem(world: World) {
     ]);
 
     for (let i = 0; i < colliders.length; i++) {
-        const position1 = world.getComponent(Position, colliders[i].entity);
-        const rotation1 = world.getComponent(Rotation, colliders[i].entity);
+        const position1 = world.getComponent(colliders[i].entity, Position);
+        const rotation1 = world.getComponent(colliders[i].entity, Rotation);
         const collider1 = colliders[i];
         const polygon1s = collider1.getPolygons();
 
@@ -45,9 +45,9 @@ export function collisionSystem(world: World) {
         if (position1) polygon1s.forEach(p => p.translate(position1.pos));
 
         l: for (let j = i + 1; j < colliders.length; j++) {
-            const position2 = world.getComponent(Position, colliders[j].entity);
-            if (!(position1 || position2)) continue l;
-            const rotation2 = world.getComponent(Rotation, colliders[j].entity);
+            const position2 = world.getComponent(colliders[j].entity, Position);
+            if (!(position1 || position2)) continue;
+            const rotation2 = world.getComponent(colliders[j].entity, Rotation);
             const collider2 = colliders[j];
             const polygon2s = collider2.getPolygons();
 
@@ -107,8 +107,8 @@ function separatePolygons(
         return;
     }
 
-    const mass1 = world.getComponent(Mass, position1.entity);
-    const mass2 = world.getComponent(Mass, position2.entity);
+    const mass1 = world.getComponent(position1.entity, Mass);
+    const mass2 = world.getComponent(position2.entity, Mass);
 
     let weight1 = 1 / (mass1?.mass || Infinity);
     let weight2 = 1 / (mass2?.mass || Infinity);
@@ -128,17 +128,17 @@ function resolveCollision(
     collisionPoint: Vector,
     world: World
 ) {
-    const velocity1 = world.getComponent(Velocity, collider1.entity);
-    const velocity2 = world.getComponent(Velocity, collider2.entity);
-    const angularVelocity1 = world.getComponent(AngularVelocity, collider1.entity);
-    const angularVelocity2 = world.getComponent(AngularVelocity, collider2.entity);
+    const velocity1 = world.getComponent(collider1.entity, Velocity);
+    const velocity2 = world.getComponent(collider2.entity, Velocity);
+    const angularVelocity1 = world.getComponent(collider1.entity, AngularVelocity);
+    const angularVelocity2 = world.getComponent(collider2.entity, AngularVelocity);
     if (!velocity1 && !velocity2 && !angularVelocity1 && !angularVelocity2) return;
-    const restitution1 = world.getComponent(Restitution, collider1.entity);
-    const restitution2 = world.getComponent(Restitution, collider2.entity);
+    const restitution1 = world.getComponent(collider1.entity, Restitution);
+    const restitution2 = world.getComponent(collider2.entity, Restitution);
 
     const relativeVelocity = (velocity1?.vel.clone() || Vector.zero()).subtract(velocity2?.vel || Vector.zero());
-    const mass1 = world.getComponent(Mass, collider1.entity)?.mass || Infinity;
-    const mass2 = world.getComponent(Mass, collider2.entity)?.mass || Infinity;
+    const mass1 = world.getComponent(collider1.entity, Mass)?.mass || Infinity;
+    const mass2 = world.getComponent(collider2.entity, Mass)?.mass || Infinity;
     const jointMasses = 1 / mass1 + 1 / mass2;
 
     const collisionArm1 = collisionPoint.clone().subtract(collider1.offset.clone().add(position1?.pos || Vector.zero()));
@@ -193,15 +193,15 @@ function frictionResolution(
     world: World,
     j: number
 ) {
-    const velocity1 = world.getComponent(Velocity, collider1.entity);
-    const velocity2 = world.getComponent(Velocity, collider2.entity);
-    const angularVelocity1 = world.getComponent(AngularVelocity, collider1.entity);
-    const angularVelocity2 = world.getComponent(AngularVelocity, collider2.entity);
+    const velocity1 = world.getComponent(collider1.entity, Velocity);
+    const velocity2 = world.getComponent(collider2.entity, Velocity);
+    const angularVelocity1 = world.getComponent(collider1.entity,AngularVelocity);
+    const angularVelocity2 = world.getComponent(collider2.entity, AngularVelocity);
     if (!velocity1 && !velocity2 && !angularVelocity1 && !angularVelocity2) return;
 
     const relativeVelocity = (velocity1?.vel.clone() || Vector.zero()).subtract(velocity2?.vel || Vector.zero());
-    const mass1 = world.getComponent(Mass, collider1.entity)?.mass || Infinity;
-    const mass2 = world.getComponent(Mass, collider2.entity)?.mass || Infinity;
+    const mass1 = world.getComponent(collider1.entity, Mass)?.mass || Infinity;
+    const mass2 = world.getComponent(collider2.entity, Mass)?.mass || Infinity;
     const jointMasses = 1 / mass1 + 1 / mass2;
 
     const collisionArm1 = collisionPoint.clone().subtract(collider1.offset.clone().add(position1?.pos || Vector.zero()));
@@ -240,8 +240,8 @@ function frictionResolution(
     if (tangentVelocity.nearZero()) return;
     tangentVelocity.normalize();
 
-    const friction1 = world.getComponent(Friction, collider1.entity);
-    const friction2 = world.getComponent(Friction, collider2.entity);
+    const friction1 = world.getComponent(collider1.entity, Friction);
+    const friction2 = world.getComponent(collider2.entity, Friction);
 
     const staticFriction = Math.sqrt(
         (friction1 ? friction1.staticFriction : 0) *
