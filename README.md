@@ -25,7 +25,7 @@
             - ...
 
 ```typescript
-EntityWrapper.bind((e: Entity) => System): EntityWrapper;
+EntityWrapper.bind(generateBinding: (e: Entity) => System): EntityWrapper;
 ```
 - Bind!
     - EntityWrapper.bindRender((e: Entity) => (world: World) => void)
