@@ -75,10 +75,10 @@ export function createRenderSystem(
     height: number,
     isDynamic: boolean
 ): System {
-    ctx = document.getElementById('app')!
+    ctx = document.getElementById("app")!
         .appendChild(document
-            .createElement('canvas'))
-        .getContext("2d")!
+            .createElement("canvas"))
+        .getContext("2d")!;
 
     if (!isDynamic) {
         ctx.canvas.width = width;
@@ -183,10 +183,9 @@ function draw(
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
         ctx.font = `${drawable.fontSize}px ${drawable.font}`;
-        for (const key in drawable.textOptions) {
-            /** @ts-ignore - I know what I'm doing. */
-            ctx[key] = drawable.textOptions[key];
-        }
+        ctx.direction = drawable.textOptions.direction;
+        ctx.textAlign = drawable.textOptions.textAlign;
+        ctx.textBaseline = drawable.textOptions.textBaseline;
         if (drawable.scale instanceof Vector) {
             ctx.scale(...drawable.scale.toTuple());
         } else {
@@ -199,10 +198,9 @@ function draw(
         ctx.strokeStyle = drawable.strokeColor.toFillStyle();
         ctx.lineWidth = drawable.lineWidth;
         ctx.font = `${drawable.fontSize}px ${drawable.font}`;
-        for (const key in drawable.textOptions) {
-            /** @ts-ignore - I know what I'm doing. */
-            ctx[key] = drawable.textOptions[key];
-        }
+        ctx.direction = drawable.textOptions.direction;
+        ctx.textAlign = drawable.textOptions.textAlign;
+        ctx.textBaseline = drawable.textOptions.textBaseline;
         if (drawable.scale instanceof Vector) {
             ctx.scale(...drawable.scale.toTuple());
         } else {
@@ -210,27 +208,27 @@ function draw(
         }
         const textCount = drawable.text.length;
         switch (drawable.textOptions.textBaseline) {
-            case "hanging":
-            case "top":
-                for (let i = 0; i < textCount; i++) {
-                    ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * i);
-                    ctx.strokeText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * i);
-                }
-                break;
-            case "alphabetic":
-            case "bottom":
-            case "ideographic":
-                for (let i = 0; i < textCount; i++) {
-                    ctx.fillText(drawable.text[i], 0, drawable.fontSize * i);
-                    ctx.strokeText(drawable.text[i], 0, drawable.fontSize * i);
-                }
-                break;
-            case "middle":
-                for (let i = 0; i < textCount; i++) {
-                    ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
-                    ctx.strokeText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
-                }
-                break;
+        case "hanging":
+        case "top":
+            for (let i = 0; i < textCount; i++) {
+                ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * i);
+                ctx.strokeText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * i);
+            }
+            break;
+        case "alphabetic":
+        case "bottom":
+        case "ideographic":
+            for (let i = 0; i < textCount; i++) {
+                ctx.fillText(drawable.text[i], 0, drawable.fontSize * i);
+                ctx.strokeText(drawable.text[i], 0, drawable.fontSize * i);
+            }
+            break;
+        case "middle":
+            for (let i = 0; i < textCount; i++) {
+                ctx.fillText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
+                ctx.strokeText(drawable.text[textCount - i - 1], 0, -drawable.fontSize * (i - textCount / 2 + 0.5));
+            }
+            break;
         }
     }
     ctx.restore();

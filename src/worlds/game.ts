@@ -23,7 +23,6 @@ import { loadImage } from "../lib/util/load_image";
 import { Vector } from "../lib/util/vector";
 import { HEIGHT, WIDTH } from "../parameters";
 import { MyTestBehavior, myTestBehaviorSystem } from "../user_scripts/my_test_behavior";
-import sprite from '../assets/sprite_PNG98773.png';
 import { SpriteRenderer } from "../lib/components/sprite_renderer";
 import { animationSystem } from "../lib/systems/animation_system";
 import { AnimationController } from "../lib/components/animation_controller";
@@ -36,6 +35,7 @@ import { animatedDialogSystem } from "../lib/systems/animated_dialog_system";
 import { Matrix } from "../lib/util/matrix";
 import { PolygonCollider } from "../lib/components/polygon_collider";
 import { PolygonRenderer } from "../lib/components/polygon_renderer";
+import sprite from "../assets/sprite_PNG98773.png";
 
 export class Game extends World {
     playerImg: HTMLImageElement = new Image();
@@ -63,7 +63,7 @@ export class Game extends World {
                 CameraController,
                 Vector.new(200, 200)
             )
-            ;
+        ;
 
         this.createEntity()
             .add(
@@ -79,14 +79,14 @@ export class Game extends World {
             .add(
                 ComplexCollider,
                 [
-                    ['polygon', 0.6, [
+                    ["polygon", 0.6, [
                         Vector.new(37.5, 37.5),
                         Vector.new(37.5, -37.5),
                         Vector.new(-37.5, -37.5),
                         Vector.new(-37.5, 37.5),
                     ], Vector.zero(), 0],
-                    ['circle', 0.2, 74, Vector.new(0, 37.5)],
-                    ['circle', 0.2, 74, Vector.new(0, -37.5)]
+                    ["circle", 0.2, 74, Vector.new(0, 37.5)],
+                    ["circle", 0.2, 74, Vector.new(0, -37.5)]
                 ]
             )
             .add(
@@ -119,7 +119,7 @@ export class Game extends World {
             .add(SimpleDrag)
             .add(MyTestBehavior)
             .add(Tag, "camera_center")
-            ;
+        ;
 
         this.createEntity()
             .add(
@@ -138,7 +138,7 @@ export class Game extends World {
                 Vector.new(300, 300)
             )
             .add(Tag, "platform")
-            ;
+        ;
 
         this.createEntity()
             .add(
@@ -157,7 +157,7 @@ export class Game extends World {
                 300
             )
             .add(Tag, "platform")
-            ;
+        ;
 
         this.createEntity()
             .add(
@@ -181,12 +181,12 @@ export class Game extends World {
             .add(
                 ComplexCollider,
                 [
-                    ['circle', 1, 150, Vector.new(0, 0)],
-                    ['rect', 1, Vector.new(50, 200), Vector.new(0, 149), 0],
+                    ["circle", 1, 150, Vector.new(0, 0)],
+                    ["rect", 1, Vector.new(50, 200), Vector.new(0, 149), 0],
                 ]
             )
             .add(Tag, "platform")
-            ;
+        ;
 
         this.createEntity()
             .add(
@@ -200,7 +200,7 @@ export class Game extends World {
                 Color.new(0, 175, 255),
                 5
             )
-            ;
+        ;
 
         this.createEntity()
             .add(
@@ -261,6 +261,6 @@ export class Game extends World {
             )
             .add(Friction)
             .add(Restitution)
-            ;
+        ;
     }
 }

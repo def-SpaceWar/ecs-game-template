@@ -10,7 +10,7 @@ module.exports = {
     "overrides": [
         {
             "env": {
-                "node": true
+                "node": false
             },
             "files": [
                 ".eslintrc.{js,cjs}"

@@ -1,12 +1,12 @@
-import './style.css';
-import { System, World } from './lib/ecs';
-import { IS_DYNAMIC_SIZE, HEIGHT, STARTING_SCENE, WIDTH } from './parameters';
-import { createRenderSystem } from './lib/systems/render_system';
-import { Time } from './lib/util/time';
-import { createDebugFpsSystem } from './lib/systems/debug_fps_system';
-import { Input } from './lib/util/input';
-import { createDebugTpsSystem } from './lib/systems/debug_tps_system';
-import { cameraSystem } from './lib/systems/camera_system';
+import "./style.css";
+import { System, World } from "./lib/ecs";
+import { IS_DYNAMIC_SIZE, HEIGHT, STARTING_SCENE, WIDTH } from "./parameters";
+import { createRenderSystem } from "./lib/systems/render_system";
+import { Time } from "./lib/util/time";
+import { createDebugFpsSystem } from "./lib/systems/debug_fps_system";
+import { Input } from "./lib/util/input";
+import { createDebugTpsSystem } from "./lib/systems/debug_tps_system";
+import { cameraSystem } from "./lib/systems/camera_system";
 
 onload = async () => {
     await World.setWorld(STARTING_SCENE);

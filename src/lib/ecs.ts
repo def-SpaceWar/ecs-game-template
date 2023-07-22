@@ -25,7 +25,7 @@ class EntityWrapper {
      * this.createEntity().add(Position, Vector.new(100, 100));
      * ```
      */
-    add<T extends any[]>(Type: ComponentConstructor<T>, ...args: T): this {
+    add<T extends unknown[]>(Type: ComponentConstructor<T>, ...args: T): this {
         this.world._addComponent(new Type(this.entity, ...args));
         return this;
     }
@@ -79,14 +79,14 @@ export interface Component {
  * @description Interface of the constructor of a component which must take an entity as its
  * first parameter.
  */
-export interface ComponentConstructor<T extends any[]> {
+export interface ComponentConstructor<T extends unknown[]> {
     new(entity: Entity, ...args: T): Component;
 }
 
 /**
  * @description Represents the type of a class of a Component.
  */
-type ComponentClass = new (...args: any) => Component;
+type ComponentClass = new (...args: never[]) => Component;
 
 /**
  * @description Represents the base of a component that doesn't take any parameters.
@@ -103,7 +103,7 @@ export abstract class UnitComponent {
  */
 export function isComponent<T extends Component>(
     component: Component,
-    Type: new (...args: any[]) => T
+    Type: new (...args: never[]) => T
 ): component is T {
     return component instanceof Type;
 }
@@ -335,7 +335,7 @@ export abstract class World {
      */
     getComponent<T extends Component>(
         entity: Entity,
-        Type: new (...args: any) => T
+        Type: new (...args: never[]) => T
     ): T | undefined {
         for (const component of this.components) {
             if (component.entity != entity) continue;
@@ -353,7 +353,7 @@ export abstract class World {
      */
     *getComponents<T extends Component>(
         entity: Entity,
-        Type: new (...args: any) => T
+        Type: new (...args: never[]) => T
     ): Generator<T, void, unknown> {
         for (const component of this.components) {
             if (component.entity != entity) continue;
@@ -370,7 +370,7 @@ export abstract class World {
      */
     getComponentsArray<T extends Component>(
         entity: Entity,
-        Type: new (...args: any) => T
+        Type: new (...args: never[]) => T
     ): T[] {
         const comps: T[] = [];
         for (const component of this.components) {
@@ -389,7 +389,7 @@ export abstract class World {
      */
     *getComponentsOfTypes<T extends Component>(
         entity: Entity,
-        ...Types: (new (...args: any[]) => T)[]
+        ...Types: (new (...args: never[]) => T)[]
     ): Generator<T, void, unknown> {
         for (const Type of Types) {
             for (const component of this.components) {
@@ -409,7 +409,7 @@ export abstract class World {
      */
     getComponentsOfTypesArray<T extends Component>(
         entity: Entity,
-        ...Types: (new (...args: any[]) => T)[]
+        ...Types: (new (...args: never[]) => T)[]
     ): T[] {
         const comps: T[] = [];
         for (const Type of Types) {
@@ -428,7 +428,7 @@ export abstract class World {
      * @returns The first component that is an instance of the component class.
      */
     findComponent<T extends Component>(
-        Type: new (...args: any) => T
+        Type: new (...args: never[]) => T
     ): T | undefined {
         for (const component of this.components) {
             if (!isComponent(component, Type)) continue;
@@ -443,7 +443,7 @@ export abstract class World {
      * class.
      */
     *findComponents<T extends Component>(
-        Type: new (...args: any) => T
+        Type: new (...args: never[]) => T
     ): Generator<T, void, unknown> {
         for (const component of this.components) {
             if (!isComponent(component, Type)) continue;
@@ -457,7 +457,7 @@ export abstract class World {
      * @returns A list of components that are instances of the component class.
      */
     findComponentsArray<T extends Component>(
-        Type: new (...args: any) => T
+        Type: new (...args: never[]) => T
     ): T[] {
         const comps: T[] = [];
         for (const component of this.components) {
@@ -474,7 +474,7 @@ export abstract class World {
      * classes.
      */
     *findComponentsOfTypes<T extends Component>(
-        Types: (new (...args: any[]) => T)[]
+        Types: (new (...args: never[]) => T)[]
     ): Generator<T, void, unknown> {
         for (const component of this.components) {
             for (const Type of Types) {
@@ -491,7 +491,7 @@ export abstract class World {
      * classes.
      */
     findComponentsOfTypesArray<T extends Component>(
-        Types: (new (...args: any[]) => T)[]
+        Types: (new (...args: never[]) => T)[]
     ): T[] {
         const comps: T[] = [];
         for (const component of this.components) {
