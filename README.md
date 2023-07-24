@@ -15,7 +15,8 @@
             - simple_drag.ts << Finished >>
             - acceleration.ts << Finished >>
             - text_renderer.ts << Finished >>
-            - animated_dialog.ts << In Progress >>
+            - animated_dialog.ts << Finished >>
+            - circle_renderer.ts << Finished >>
             - ...
             - sprite_renderer.ts << Finished >>
             - ...

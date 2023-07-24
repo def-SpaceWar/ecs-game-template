@@ -10,7 +10,13 @@ export class CircleRenderer implements ColoredDrawable {
     rotation: number = 0;
 
     /**
-     * @param diameter Diameter of the circle.
+     * @param entity Provided by an entity wrapper.
+     * @param diameter The diameter of the circle.
+     * @param color The output color/fillStyle of the drawable.
+     * @param zIndex The z-index a drawable is rendered at.
+     * @param offset the positional offset a drawable is rendered at.
+     * @param strokeColor The output strokeColor/strokeStyle of the drawable.
+     * @param lineWidth The lineWidth of the strokes of a drawable.
      */
     constructor(
         public entity: Entity,

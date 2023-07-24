@@ -7,6 +7,7 @@ import { createDebugFpsSystem } from "./lib/systems/debug_fps_system";
 import { Input } from "./lib/util/input";
 import { createDebugTpsSystem } from "./lib/systems/debug_tps_system";
 import { cameraSystem } from "./lib/systems/camera_system";
+import { createBindSystem } from "./lib/systems/bind_system";
 
 onload = async () => {
     await World.setWorld(STARTING_SCENE);
@@ -15,6 +16,7 @@ onload = async () => {
         Time.createRenderTickSystem(),
         cameraSystem,
         createDebugFpsSystem(25),
+        createBindSystem("render"),
         createRenderSystem(WIDTH, HEIGHT, IS_DYNAMIC_SIZE)
     ];
 
@@ -30,7 +32,8 @@ onload = async () => {
 
     const globalSystems: System[] = [
         Time.createTickSystem(),
-        createDebugTpsSystem(100)
+        createDebugTpsSystem(100),
+        createBindSystem("tick"),
     ];
 
     setInterval(() => {

@@ -1,3 +1,4 @@
+import { Bind, BindType } from "./components/bind";
 import { Name } from "./components/name";
 
 // --- Entity ------------------------------------------------------------------
@@ -59,6 +60,12 @@ class EntityWrapper {
             this.world._addComponent(result as Component);
         }
         return this;
+    }
+
+    bind(generateBinding: (e: Entity) => System, type: BindType = "tick"): EntityWrapper {
+        return this.addCustom(e =>
+            new Bind(e, generateBinding(e), type)
+        );
     }
 }
 

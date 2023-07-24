@@ -25,6 +25,12 @@ export class AnimatedDialog implements Component {
      */
     isDone = false;
 
+    /**
+     * @param entity Provided by an entity wrapper.
+     * @param dialog All the dialog to be animated.
+     * @param speed The speed in characters/second to render the dialog.
+     * @param multiLine Whether or not the dialog spans multiple lines.
+     */
     constructor(
         public entity: Entity,
         public dialog: string[],
