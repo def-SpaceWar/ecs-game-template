@@ -18,6 +18,7 @@ class EntityWrapper {
     constructor(public entity: Entity, private world: World) { }
 
     /**
+     * @deprecated
      * @description Adds a component with the id of the wrapped entity.
      * @param Type The constructor/class of a Component.
      * @param args The arguments for initializing the component.
@@ -41,14 +42,16 @@ class EntityWrapper {
      * @returns The entity wrapper back for more modification.
      * @example ```ts
      * const customCoords = e => new Position(e, Vector.new(100, 100));
-     * this.createEntity().addCustom(customCoords);
+     * this.createEntity().$(customCoords);
      * ```
      * @example ```ts
      * const customCoords2 = e => [new Position(e, Vector.new(100, 100))];
-     * this.createEntity().addCustom(customCoords2);
+     * this.createEntity().$(customCoords2);
      * ```
      */
-    addCustom(
+    $(generateComponents: (e: Entity) => Component): this;
+    $(generateComponents: (e: Entity) => Component[]): this;
+    $(
         generateComponents: (e: Entity) => Component | Component[]
     ): this {
         const result = generateComponents(this.entity);
@@ -63,7 +66,7 @@ class EntityWrapper {
     }
 
     bind(generateBinding: (e: Entity) => System, type: BindType = "tick"): EntityWrapper {
-        return this.addCustom(e =>
+        return this.$(e =>
             new Bind(e, generateBinding(e), type)
         );
     }

@@ -22,7 +22,7 @@ export function cameraSystem(world: World) {
             }
         }
         avgPos.scale(1 / tagCount);
-        const lerpConstant = 1 - Math.pow(0.5, Time.renderDeltaTime * camera.lerpSpeed)
+        const lerpConstant = 1 - Math.pow(0.5, Time.renderDeltaTime * camera.lerpSpeed);
         camera.pos.scale(1 - lerpConstant).add(avgPos.scale(lerpConstant));
     }
 }
